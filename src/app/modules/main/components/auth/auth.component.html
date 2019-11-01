@@ -1,0 +1,25 @@
+<div fxLayout="column" fxLayoutAlign="center center">
+
+  <h1>Sign in to GitHub</h1>
+  <form [formGroup]="authForm" (submit)="submitForm(authForm.value)" class="form">
+    <div fxLayout='column'>
+
+      <div fxFlex="33">
+        <mat-form-field>
+          <input matInput placeholder="Username" formControlName="username">
+        </mat-form-field>
+      </div>
+
+      <div fxFlex="33">
+        <mat-form-field>
+          <input matInput placeholder="Password" formControlName="password">
+        </mat-form-field>
+      </div>
+
+      <div fxFlex="33">
+        <button type="submit" mat-raised-button>Sign in</button>
+      </div>
+
+    </div>
+  </form>
+</div>
