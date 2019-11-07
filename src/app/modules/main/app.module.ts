@@ -11,14 +11,22 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
-import { MatToolbarModule } from "@angular/material/toolbar";
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { ProfileComponent } from './components/profile/profile.component';
+import { MatCardModule } from "@angular/material/card";
+import { SearchComponent } from './components/search/search.component';
+import { ListComponent } from './components/list/list.component';
+import { MatDividerModule } from "@angular/material/divider";
 
 
 @NgModule({
     declarations: [
         AppComponent,
         AuthComponent,
-        NavBarComponent
+        NavBarComponent,
+        ProfileComponent,
+        SearchComponent,
+        ListComponent
     ],
     imports: [
         BrowserModule,
@@ -30,6 +38,8 @@ import { MatToolbarModule } from "@angular/material/toolbar";
         FlexLayoutModule,
         HttpClientModule,
         MatToolbarModule,
+        MatCardModule,
+        MatDividerModule,
     ],
     providers: [],
     bootstrap: [AppComponent]

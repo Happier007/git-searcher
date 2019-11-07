@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { IProfile } from '../../../models/profile';
+import { IUser } from '../../../models/user';
+import { IToken } from '@models/token';
+import { ISearch } from "@models/search";
 
 @Injectable({
     providedIn: 'root'
@@ -9,12 +13,13 @@ import { Observable } from 'rxjs';
 
 export class GitService {
 
-    public token: string;
     private clientId = 'b9d368bff03d87c7b9ae';
     private clientSecret = '5f65b02ff642bf23560f6f73d793b4f1b8387b70';
     private redirectUri = 'http://localhost:4200/auth';
     private authUrl = 'https://github.com/login/oauth/';
     private key = 'token';
+
+    private subject$ = new Subject<any>();
 
     constructor(private http: HttpClient, private router: Router) {
     }
@@ -23,50 +28,55 @@ export class GitService {
         window.location.href = `${this.authUrl}authorize?client_id=${this.clientId}&redirect_uri=${this.redirectUri}&login=${login}`;
     }
 
-    public getToken(code: string): Observable<any> {
-
+    public getToken(code: string): Observable<IToken> {
+        const headers = {
+            Accept: 'application/json'
+        };
         const params = {
             client_id: this.clientId,
             client_secret: this.clientSecret,
             code,
             redirect_uri: this.redirectUri
-        }
-
-        console.log(555, code);
-        return this.http.post('/login/oauth/access_token', params, {responseType: 'text'});
+        };
+        return this.http.post<IToken>('/login/oauth/access_token', params, {headers});
     }
 
-    public saveToken(): void {
-        localStorage.setItem(this.key, JSON.stringify(this.token));
+    public getProfile(token: string): Observable<IProfile> {
+        const headers = {
+            Authorization: 'token ' + token
+        };
+        return this.http.get<IProfile>('https://api.github.com/user', {headers});
     }
 
-    public readToken(): string {
+    public sendMessage(user: IUser): void {
+        this.subject$.next(user);
+    }
+
+    public getMessage(): Observable<any> {
+        return this.subject$.asObservable();
+    }
+
+    public saveUser(token: string, username: string): void {
+        const newUser: IUser = {
+            username,
+            token
+        };
+        localStorage.setItem(this.key, JSON.stringify(newUser));
+        this.sendMessage(newUser);
+    }
+
+    public readUser(): IUser {
         return JSON.parse(localStorage.getItem(this.key));
     }
+
+    public logout(): void {
+        console.log('12345');
+        this.subject$.next();
+        localStorage.setItem(this.key, JSON.stringify(null));
+        this.router.navigate(['/auth']);
+    }
+
+    public searchUsers(username: string): Observable<ISearch> {
+        return this.http.get<ISearch>(`https://api.github.com/search/users?q=${username}+in:login`);
+    }
 }
-
-// let headers = new HttpHeaders();
-// headers = headers
-// tslint:disable-next-line:max-line-length
-//     .set('Access-Control-Expose-Headers', 'ETag, Link, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval')
-//     .set('Access-Control-Max-Age', '86400')
-// tslint:disable-next-line:max-line-length
-//     .set('Access-Control-Allow-Headers', 'Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, Accept-Encoding, X-GitHub-OTP, X-Requested-With, User-Agent')
-//     .set('Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE')
-//     .set('Access-Control-Allow-Origin', '*.github.com');
-// .set('Access-Control-Allow-Origin', '*')
-// .set('Access-Control-Allow-Methods', 'POST')
-// .set('Access-Control-Allow-Headers', 'Origin, Content-Type, X-Auth-Token , Authorization');
-
-// const params = new HttpParams();
-// params.append('client_id', this.clientId);
-// params.append('client_secret', this.clientSecret);
-// params.append('code', code);
-// params.append('redirect_uri', this.redirectUri);
-
-// let params = {
-//     client_id: this.clientId,
-//     client_secret: this.clientSecret,
-//     code,
-//     redirect_uri: this.redirectUri
-// }
