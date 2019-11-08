@@ -1,0 +1,18 @@
+<div fxLayout="row">
+    <div fxFlex="33%">
+        <mat-card *ngFor="let user of users">
+            <mat-card-header>
+                <div mat-card-avatar><img mat-card-image src="{{user.avatar_url}}" alt="user"></div>
+                <mat-card-title>
+                    <a [routerLink]="['/','search']"
+                       [queryParams]="{q: this.selectedUsername || null , id: user.id}">{{user.login}}
+                    </a>
+                </mat-card-title>
+                <mat-card-subtitle>{{user.html_url}}</mat-card-subtitle>
+            </mat-card-header>
+        </mat-card>
+    </div>
+    <div fxFlex="33%">b</div>
+    <div fxFlex="33%">c</div>
+</div>
+<!--malik89286035133-->

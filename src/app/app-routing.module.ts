@@ -8,7 +8,7 @@ const routes: Routes = [
     {path: 'auth', component: AuthComponent},
     {path: 'profile', component: ProfileComponent},
     {path: 'search', component: SearchComponent},
-    {path: 'search/:username', component: SearchComponent},
+    {path: 'search/:username:id', component: SearchComponent},
 
 ];
 

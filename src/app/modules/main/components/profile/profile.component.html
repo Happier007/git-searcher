@@ -1,0 +1,12 @@
+<mat-card *ngIf="profile">
+    <mat-card-header>
+        <div mat-card-avatar><img mat-card-image src="{{profile.avatar_url}}" alt="user"></div>
+        <mat-card-title>{{profile.login}}</mat-card-title>
+        <mat-card-subtitle>{{profile.html_url}}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <p>ID: {{profile.id}}</p>
+        <p>Сreated at: {{profile.created_at | date: 'dd/MM/yyyy'}}</p>
+        <p>Email: {{profile.email }}</p>
+    </mat-card-content>
+</mat-card>

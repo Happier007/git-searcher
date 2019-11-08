@@ -1,0 +1,18 @@
+<mat-toolbar color="primary" fxLayout="row" fxLayoutAlign="space-between center">
+    <div>
+        <a matLine routerLink="/search" color="primary">Git Service</a>
+    </div>
+    <div>
+        <div *ngIf="user">
+            <div>
+                <a matLine routerLink="/profile" color="warn">{{user.username}}</a>
+            </div>
+            <div>
+                <button matLine color="warn" (click)="logout()">logout</button>
+            </div>
+        </div>
+        <div *ngIf="!user">
+            <a matLine routerLink="/auth" color="primary">login</a>
+        </div>
+    </div>
+</mat-toolbar>

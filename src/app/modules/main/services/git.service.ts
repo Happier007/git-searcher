@@ -79,4 +79,9 @@ export class GitService {
     public searchUsers(username: string): Observable<ISearch> {
         return this.http.get<ISearch>(`https://api.github.com/search/users?q=${username}+in:login`);
     }
+
+    public users(username: string): Observable<IProfile> {
+        return this.http.get<IProfile>(`https://api.github.com/search/users?q=${username}`);
+    }
+    // https://api.github.com/users/Happier007
 }

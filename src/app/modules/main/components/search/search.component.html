@@ -1,0 +1,14 @@
+<form [formGroup]="searchForm" (submit)="submitForm(searchForm.value)" class="form">
+    <div fxLayout='column'>
+        <div fxFlex="33">
+            <mat-form-field>
+                <input matInput placeholder="Username" formControlName="username">
+            </mat-form-field>
+        </div>
+        <div fxFlex="33">
+            <button type="submit" mat-raised-button>Sign in</button>
+        </div>
+    </div>
+</form>
+<mat-divider></mat-divider>
+<app-list></app-list>
