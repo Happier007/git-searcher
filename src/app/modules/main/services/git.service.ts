@@ -1,9 +1,14 @@
+// ANGULAR
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+
+// RXJS
 import { Observable, Subject } from 'rxjs';
-import { IProfile } from '../../../models/profile';
-import { IUser } from '../../../models/user';
+
+// MODELS
+import { IProfile } from '@models/profile';
+import { IUser } from '@models/user';
 import { IToken } from '@models/token';
 import { ISearch, IUserSearch } from '@models/search';
 
@@ -91,5 +96,4 @@ export class GitService {
         const user = users.find(item => item.id.toString() === id);
         return user.login;
     }
-
 }

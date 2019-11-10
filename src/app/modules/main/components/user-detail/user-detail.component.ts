@@ -13,9 +13,9 @@ export class UserDetailComponent implements OnInit {
     @Input() user: IUserSearch;
 
     constructor(private route: ActivatedRoute) {
-        console.log(this.route.snapshot.paramMap.get('id'));
     }
 
     ngOnInit() {
+        this.route.queryParams.subscribe((params) => console.log(params.id));
     }
 }

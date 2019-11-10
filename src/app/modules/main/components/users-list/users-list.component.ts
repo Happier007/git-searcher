@@ -27,8 +27,7 @@ export class UsersListComponent implements OnInit {
         this.selectedName = this.route.snapshot.queryParamMap.get('q');
     }
 
-    ngOnInit() {
-        console.log('111');
+    ngOnInit(): void {
         if (this.selectedName) {
             this.users$ = this.gitService.searchUsers(this.selectedName)
                 .pipe(
@@ -39,7 +38,7 @@ export class UsersListComponent implements OnInit {
         }
     }
 
-    checkboxLabel(row?: IUserSearch): string {
+    public checkboxLabel(row?: IUserSearch): string {
         return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row`;
     }
 

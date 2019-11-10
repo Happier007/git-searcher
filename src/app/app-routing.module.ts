@@ -7,7 +7,7 @@ const routes: Routes = [
     {path: 'auth', component: AuthComponent},
     {path: 'profile', component: ProfileComponent},
     {path: 'search', redirectTo: 'search/'},
-    {path: 'search/:q', component: UsersListComponent},
+    {path: 'search/:q:id', component: UsersListComponent},
 ];
 
 @NgModule({

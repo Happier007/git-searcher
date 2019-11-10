@@ -28,6 +28,8 @@ export class SearchComponent implements OnInit {
     }
 
     private submitForm(form): void {
-         this.router.navigate(['/search'], {queryParams: {q: form.username}});
+         this.router.navigate(['/search'], {queryParams: {q: form.username}} );
+         // this.router.navigate(['/search', id], {queryParams: {q: form.username}, relativeTo: this.route });
+         // this.router.navigateByUrl('/search?q=' + form.username);
     }
 }
