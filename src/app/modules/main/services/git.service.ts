@@ -5,7 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { IProfile } from '../../../models/profile';
 import { IUser } from '../../../models/user';
 import { IToken } from '@models/token';
-import { ISearch } from "@models/search";
+import { ISearch, IUserSearch } from '@models/search';
 
 @Injectable({
     providedIn: 'root'
@@ -70,7 +70,6 @@ export class GitService {
     }
 
     public logout(): void {
-        console.log('12345');
         this.subject$.next();
         localStorage.setItem(this.key, JSON.stringify(null));
         this.router.navigate(['/auth']);
@@ -83,5 +82,14 @@ export class GitService {
     public users(username: string): Observable<IProfile> {
         return this.http.get<IProfile>(`https://api.github.com/search/users?q=${username}`);
     }
-    // https://api.github.com/users/Happier007
+
+    public user(username: string): Observable<IProfile> {
+        return this.http.get<IProfile>(`https://api.github.com/users/${username}`);
+    }
+
+    public findUsername(users: IUserSearch[], id: string): string {
+        const user = users.find(item => item.id.toString() === id);
+        return user.login;
+    }
+
 }

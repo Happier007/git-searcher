@@ -1,14 +1,9 @@
-<form [formGroup]="searchForm" (submit)="submitForm(searchForm.value)" class="form">
-    <div fxLayout='column'>
-        <div fxFlex="33">
-            <mat-form-field>
-                <input matInput placeholder="Username" formControlName="username">
-            </mat-form-field>
-        </div>
-        <div fxFlex="33">
-            <button type="submit" mat-raised-button>Sign in</button>
-        </div>
-    </div>
+<form [formGroup]="searchForm" (submit)="submitForm(searchForm.value)" class="form" fxLayout="row" fxLayoutGap="25px">
+    <mat-form-field fxFlex="36%" fxFlexOffset="20px" >
+        <input matInput placeholder="Username" formControlName="username">
+        <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
 </form>
 <mat-divider></mat-divider>
-<app-list></app-list>
+<!--<app-list></app-list>-->
+<!--<router-outlet></router-outlet>-->

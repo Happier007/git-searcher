@@ -1,4 +1,4 @@
-import { Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -28,6 +28,6 @@ export class SearchComponent implements OnInit {
     }
 
     private submitForm(form): void {
-        this.router.navigate(['/search'], {queryParams: {q: form.username}});
+         this.router.navigate(['/search'], {queryParams: {q: form.username}});
     }
 }

@@ -17,6 +17,13 @@ import { MatCardModule } from "@angular/material/card";
 import { SearchComponent } from './components/search/search.component';
 import { ListComponent } from './components/list/list.component';
 import { MatDividerModule } from "@angular/material/divider";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatIconModule } from "@angular/material/icon";
+import { MatTableModule } from "@angular/material/table";
+import { MatTabsModule } from "@angular/material/tabs";
+import { UserDetailComponent } from './components/user-detail/user-detail.component';
+import { UsersListComponent } from './components/users-list/users-list.component';
+import { UsersCheckedComponent } from './components/users-checked/users-checked.component';
 
 
 @NgModule({
@@ -26,7 +33,10 @@ import { MatDividerModule } from "@angular/material/divider";
         NavBarComponent,
         ProfileComponent,
         SearchComponent,
-        ListComponent
+        ListComponent,
+        UserDetailComponent,
+        UsersListComponent,
+        UsersCheckedComponent
     ],
     imports: [
         BrowserModule,
@@ -40,6 +50,10 @@ import { MatDividerModule } from "@angular/material/divider";
         MatToolbarModule,
         MatCardModule,
         MatDividerModule,
+        MatCheckboxModule,
+        MatIconModule,
+        MatTableModule,
+        MatTabsModule,
     ],
     providers: [],
     bootstrap: [AppComponent]

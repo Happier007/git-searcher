@@ -1,18 +1,19 @@
 <mat-toolbar color="primary" fxLayout="row" fxLayoutAlign="space-between center">
     <div>
-        <a matLine routerLink="/search" color="primary">Git Service</a>
+        <a class="logo" matLine routerLink="/search">Git Service</a>
     </div>
     <div>
         <div *ngIf="user">
-            <div>
+            <div fxLayout="row" fxLayoutGap="20px">
                 <a matLine routerLink="/profile" color="warn">{{user.username}}</a>
-            </div>
-            <div>
-                <button matLine color="warn" (click)="logout()">logout</button>
+                <button matLine color="warn" (click)="logout()">
+                    <mat-icon matSuffix>exit_to_app</mat-icon>
+                </button>
             </div>
         </div>
         <div *ngIf="!user">
-            <a matLine routerLink="/auth" color="primary">login</a>
+            <a matLine routerLink="/auth" color="primary">Sign In</a>
         </div>
     </div>
 </mat-toolbar>
+<app-search></app-search>
