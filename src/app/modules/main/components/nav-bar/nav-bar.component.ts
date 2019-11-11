@@ -16,7 +16,7 @@ export class NavBarComponent implements OnInit {
 
     ngOnInit() {
         this.user = this.gitService.readUser();
-        this.gitService.getMessage().subscribe(
+        this.gitService.getAuthUser().subscribe(
             (data: IUser) => this.user = data
         );
     }

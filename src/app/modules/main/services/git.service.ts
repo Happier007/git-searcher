@@ -23,7 +23,9 @@ export class GitService {
     private redirectUri = 'http://localhost:4200/auth';
     private authUrl = 'https://github.com/login/oauth/';
     private key = 'token';
+    //public users$: Observable<IUserSearch[]> = new Observable<IUserSearch[]>();
 
+    public users$: Observable<IUserSearch[]> = new Observable<IUserSearch[]>();
     private subject$ = new Subject<any>();
 
     constructor(private http: HttpClient, private router: Router) {
@@ -53,11 +55,7 @@ export class GitService {
         return this.http.get<IProfile>('https://api.github.com/user', {headers});
     }
 
-    public sendMessage(user: IUser): void {
-        this.subject$.next(user);
-    }
-
-    public getMessage(): Observable<any> {
+    public getAuthUser(): Observable<any> {
         return this.subject$.asObservable();
     }
 
@@ -67,7 +65,7 @@ export class GitService {
             token
         };
         localStorage.setItem(this.key, JSON.stringify(newUser));
-        this.sendMessage(newUser);
+        this.subject$.next(newUser);
     }
 
     public readUser(): IUser {
@@ -92,8 +90,15 @@ export class GitService {
         return this.http.get<IProfile>(`https://api.github.com/users/${username}`);
     }
 
-    public findUsername(users: IUserSearch[], id: string): string {
-        const user = users.find(item => item.id.toString() === id);
-        return user.login;
+    public findUser(users: IUserSearch[], id: string): IUserSearch {
+        return users.find(item => item.id.toString() === id);
+    }
+
+    public getRepos(url: string): Observable<any>  {
+        return this.http.get(url);
+    }
+
+    public getGists(url: string): Observable<any> {
+        return this.http.get(url);
     }
 }

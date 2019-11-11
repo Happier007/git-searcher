@@ -1,13 +1,12 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AuthComponent, UsersListComponent, ProfileComponent } from './modules/main/components';
+import { AuthComponent, ProfileComponent, SearchComponent } from './modules/main/components';
 
 const routes: Routes = [
     // {path: '', redirectTo: '/auth', pathMatch: 'full'},
     {path: 'auth', component: AuthComponent},
     {path: 'profile', component: ProfileComponent},
-    {path: 'search', redirectTo: 'search/'},
-    {path: 'search/:q:id', component: UsersListComponent},
+    {path: 'search', component: SearchComponent},
 ];
 
 @NgModule({

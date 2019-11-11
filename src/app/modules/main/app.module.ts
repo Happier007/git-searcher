@@ -17,10 +17,9 @@ import {
     NavBarComponent,
     ProfileComponent,
     SearchComponent,
-    UserDetailComponent,
-    UsersListComponent,
-    UsersCheckedComponent
 } from './components';
+import { SearchDetailComponent } from './components/search-detail/search-detail.component';
+import { SearchCheckedComponent } from './components/search-checked/search-checked.component';
 
 
 @NgModule({
@@ -30,9 +29,8 @@ import {
         NavBarComponent,
         ProfileComponent,
         SearchComponent,
-        UserDetailComponent,
-        UsersListComponent,
-        UsersCheckedComponent
+        SearchDetailComponent,
+        SearchCheckedComponent
     ],
     imports: [
         BrowserModule,
