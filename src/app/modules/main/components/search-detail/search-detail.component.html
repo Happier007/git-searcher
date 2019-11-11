@@ -1,0 +1,22 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>{{user.login}}</mat-card-title>
+        <mat-card-subtitle>{{user.html_url}}</mat-card-subtitle>
+    </mat-card-header>
+    <img mat-card-image src="{{user.avatar_url}}" alt="user">
+    <mat-card-content>
+        <div *ngFor="let item of user | keyvalue">
+            <b>{{item.key}}</b>: {{item.value}}
+        </div>
+    </mat-card-content>
+    <mat-card-actions>
+        <mat-tab-group color="accent" backgroundColor="primary">
+            <mat-tab label="Repos">
+                <pre>{{repos}}</pre>
+            </mat-tab>
+            <mat-tab label="Gists">
+                <pre>{{gists}}</pre>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card-actions>
+</mat-card>
