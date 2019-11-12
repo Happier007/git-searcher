@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { GitService } from '../../services/git.service';
+import { GitService } from '@services/git.service';
 import { IProfile } from '@models/profile';
 import { IUser } from '@models/user';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-profile',
@@ -11,7 +12,7 @@ import { IUser } from '@models/user';
 })
 export class ProfileComponent implements OnInit {
 
-    public profile: IProfile;
+    public profile$: Observable<IProfile>;
     public user: IUser;
 
     constructor(private gitService: GitService) {
@@ -20,10 +21,7 @@ export class ProfileComponent implements OnInit {
     ngOnInit() {
         this.user = this.gitService.readUser();
         if (this.user) {
-            this.gitService.getProfile(this.user.token).subscribe((data: IProfile) => {
-                this.profile = data;
-                console.log(data);
-            });
+            this.profile$ = this.gitService.getProfile(this.user.token);
         }
     }
 }

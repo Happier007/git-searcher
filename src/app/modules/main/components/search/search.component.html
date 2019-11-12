@@ -49,6 +49,12 @@
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></mat-row>
                 </mat-table>
+                <mat-paginator [length]=countUsers
+                               [pageIndex]="pageIndex"
+                               [pageSize]="pageSize"
+                               [pageSizeOptions]="[10, 20, 30]"
+                               (page)="getPaginatorData($event)">
+                </mat-paginator>
             </div>
         </div>
         <div fxFlex="30">
@@ -57,7 +63,7 @@
             </div>
         </div>
         <div fxFlex="30">
-            c
+            <app-search-checked [checkedUsers]="checkedUsers"></app-search-checked>
         </div>
     </div>
 </div>

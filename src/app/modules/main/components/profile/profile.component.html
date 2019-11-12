@@ -1,4 +1,4 @@
-<mat-card *ngIf="profile">
+<mat-card *ngIf="(profile$ | async) as profile">
     <mat-card-header>
         <div mat-card-avatar><img mat-card-image src="{{profile.avatar_url}}" alt="user"></div>
         <mat-card-title>{{profile.login}}</mat-card-title>

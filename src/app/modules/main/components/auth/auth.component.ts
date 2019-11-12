@@ -4,9 +4,10 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 // MAIN
-import { GitService } from '../../services/git.service';
+import { GitService } from '@services/git.service';
 import { IProfile } from '@models/profile';
 import { IToken } from '@models/token';
+import { filter, switchMap } from "rxjs/operators";
 
 @Component({
     selector: 'app-auth',
@@ -30,10 +31,8 @@ export class AuthComponent implements OnInit {
             if (params.code) {
                 this.gitService.getToken(params.code).subscribe(
                     (resToken: IToken) => {
-                        console.log(resToken);
                         this.gitService.getProfile(resToken.access_token).subscribe(
                             (resUser: IProfile) => {
-                                console.log(resUser);
                                 this.gitService.saveUser(resToken.access_token, resUser.login);
                             }
                         );
@@ -42,6 +41,17 @@ export class AuthComponent implements OnInit {
             }
         });
     }
+
+    // private getCode(): void {
+    //     this.router.queryParams
+    //         .pipe(
+    //             filter((params) => params.code),
+    //             switchMap((params) => this.gitService.getToken(params.code)),
+    //             switchMap((resToken: IToken) => this.gitService.getProfile(resToken.access_token)),
+    //             switchMap( (resUser: IProfile) => this.gitService.saveUser(resToken.access_token, resUser.login))
+    //         )
+    //         .subscribe((data) => console.log(data));
+    // }
 
     private initForm(): void {
         this.authForm = new FormGroup({

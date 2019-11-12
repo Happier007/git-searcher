@@ -12,10 +12,10 @@
     <mat-card-actions>
         <mat-tab-group color="accent" backgroundColor="primary">
             <mat-tab label="Repos">
-                <pre>{{repos}}</pre>
+                <pre>{{repos |  async | json}}</pre>
             </mat-tab>
             <mat-tab label="Gists">
-                <pre>{{gists}}</pre>
+                <pre>{{gists |  async | json}}</pre>
             </mat-tab>
         </mat-tab-group>
     </mat-card-actions>

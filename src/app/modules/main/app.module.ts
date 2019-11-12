@@ -22,6 +22,7 @@ import { SearchDetailComponent } from './components/search-detail/search-detail.
 import { SearchCheckedComponent } from './components/search-checked/search-checked.component';
 
 
+
 @NgModule({
     declarations: [
         AppComponent,
