@@ -1,57 +1,64 @@
-import { Component, OnInit, SimpleChanges, Output, ViewChild } from '@angular/core';
+// ANGULAR
+import { Component, OnInit, OnDestroy, Output, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+
+// MATERIAL
 import { MatCheckboxChange } from '@angular/material';
-import { PageEvent } from '@angular/material/paginator';
+import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
+
+// CDK
 import { SelectionModel } from '@angular/cdk/collections';
 
 // RXJS
-import { Observable } from 'rxjs';
-import { pluck, tap } from 'rxjs/operators';
+import { forkJoin, Observable, Subject } from 'rxjs';
+import { pluck, takeUntil, tap } from 'rxjs/operators';
 
 // MAIN
 import { ISearch, IUserSearch } from '@models/search';
 import { GitService } from '@services/git.service';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+
 
 @Component({
     selector: 'app-search',
     templateUrl: './search.component.html',
     styleUrls: ['./search.component.scss']
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, OnDestroy {
 
-    @Output() checkedUsers: IUserSearch[] = [];
+    @Output() checkedUsers = [];
     @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
 
     private searchForm: FormGroup;
+    private searchName: string;
+    private searchId: string;
+    private destroy$: Subject<void> = new Subject<void>();
     public users$: Observable<IUserSearch[]> = new Observable<IUserSearch[]>();
-    public searchName: string;
-    public searchId: string;
     public selectedUser: IUserSearch;
     public countUsers: number;
     public pageIndex = 1;
     public pageSize = 10;
-
     public displayedColumns: string[] = ['select', 'ava', 'login', 'url'];
     public selection = new SelectionModel<IUserSearch>(true, []);
-    public dataSource = new MatTableDataSource<IUserSearch>();
-    pageEvent: PageEvent;
 
     constructor(private gitService: GitService, private router: Router, private route: ActivatedRoute) {
-        this.dataSource.paginator = this.paginator;
         this.searchName = this.route.snapshot.queryParamMap.get('q');
         this.searchId = this.route.snapshot.queryParamMap.get('id');
         this.pageSize = Number(this.route.snapshot.queryParamMap.get('per_page')) || this.pageSize;
         this.pageIndex = Number(this.route.snapshot.queryParamMap.get('page')) || this.pageIndex;
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.initForm();
         if (this.searchName) {
             this.downloadUsers(this.searchName);
         }
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     private initForm(): void {
@@ -78,10 +85,29 @@ export class SearchComponent implements OnInit {
                 pluck('items'),
                 tap((users: IUserSearch[]) => {
                     if (this.searchId) {
-                        this.selectedUser = this.gitService.findUser(users, this.searchId);
+                        this.selectedUser = users.find(item => item.id.toString() === this.searchId);
                     }
                 })
             );
+    }
+
+    public onChange(event: MatCheckboxChange, row: IUserSearch) {
+        if (event.checked) {
+            forkJoin(this.gitService.getRepos(row.repos_url), this.gitService.getGists(row.url + '/gists'))
+                .pipe(
+                    takeUntil(this.destroy$)
+                )
+                .subscribe(
+                    (data) => {
+                        this.checkedUsers.push({info: row, data});
+                    }
+                );
+        } else {
+            const delIndex = this.checkedUsers.findIndex(item => item.info === row);
+            if (delIndex >= 0) {
+                this.checkedUsers.splice(delIndex, 1);
+            }
+        }
     }
 
     public checkboxLabel(row?: IUserSearch): string {
@@ -91,15 +117,6 @@ export class SearchComponent implements OnInit {
     public selectRow(row): void {
         this.selectedUser = row;
         this.navigate(this.searchName, row.id);
-    }
-
-    public onChange(event: MatCheckboxChange, row: IUserSearch) {
-        if (event.checked) {
-            this.checkedUsers.push(row);
-            this.checkedUsers = this.checkedUsers.slice();
-        } else {
-            this.checkedUsers = this.checkedUsers.filter(item => item !== row);
-        }
     }
 
     public getPaginatorData(event: PageEvent): PageEvent {

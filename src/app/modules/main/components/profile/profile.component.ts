@@ -1,9 +1,15 @@
+// ANGULAR
 import { Component, OnInit } from '@angular/core';
 
-import { GitService } from '@services/git.service';
+// RXJS
+import { Observable } from 'rxjs';
+
+// MODELS
 import { IProfile } from '@models/profile';
 import { IUser } from '@models/user';
-import { Observable } from 'rxjs';
+
+// MAIN
+import { GitService } from '@services/git.service';
 
 @Component({
     selector: 'app-profile',

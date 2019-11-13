@@ -1,7 +1,15 @@
+// ANGULAR
 import { Component, Input, OnInit } from '@angular/core';
-import { IUserSearch } from '@models/search';
-import { GitService } from '@services/git.service';
+
+// RXJS
 import { Observable } from 'rxjs';
+
+// MODELS
+import { IUserSearch } from '@models/search';
+
+// MAIN
+import { GitService } from '@services/git.service';
+
 
 @Component({
     selector: 'app-search-detail',

@@ -8,6 +8,9 @@
       ],
       "@services/*": [
         "src/app/modules/main/services/*"
+      ],
+      "@environments/*": [
+        "src/environments/*"
       ]
     },
     "outDir": "./dist/out-tsc",

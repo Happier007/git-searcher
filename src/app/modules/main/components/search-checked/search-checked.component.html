@@ -1,21 +1,21 @@
 <mat-card *ngFor="let user of checkedUsers">
     <mat-card-header>
-        <mat-card-title>{{user.login}}</mat-card-title>
-        <mat-card-subtitle>{{user.html_url}}</mat-card-subtitle>
+        <mat-card-title>{{user.info.login}}</mat-card-title>
+        <mat-card-subtitle>{{user.info.html_url}}</mat-card-subtitle>
     </mat-card-header>
-    <img mat-card-image src="{{user.avatar_url}}" alt="user">
+    <img mat-card-image src="{{user.info.avatar_url}}" alt="user">
     <mat-card-content>
-        <div *ngFor="let item of user | keyvalue">
+        <div *ngFor="let item of user.info | keyvalue">
             <b>{{item.key}}</b>: {{item.value}}
         </div>
     </mat-card-content>
     <mat-card-actions>
         <mat-tab-group color="accent" backgroundColor="primary">
             <mat-tab label="Repos">
-<!--                <pre>{{repos |  async | json}}</pre>-->
+                <pre>{{user.data[0] | json}}</pre>
             </mat-tab>
             <mat-tab label="Gists">
-<!--                <pre>{{gists |  async | json}}</pre>-->
+                <pre>{{user.data[1] | json}}</pre>
             </mat-tab>
         </mat-tab-group>
     </mat-card-actions>

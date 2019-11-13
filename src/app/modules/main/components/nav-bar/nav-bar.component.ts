@@ -1,24 +1,43 @@
-import { Component, OnInit } from '@angular/core';
-import { GitService } from '../../services/git.service';
+// ANGULAR
+import { Component, OnInit, OnDestroy } from '@angular/core';
+
+// RXJS
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+// MODELS
 import { IUser } from '@models/user';
+
+// MAIN
+import { GitService } from '@services/git.service';
 
 @Component({
     selector: 'app-nav-bar',
     templateUrl: './nav-bar.component.html',
     styleUrls: ['./nav-bar.component.scss']
 })
-export class NavBarComponent implements OnInit {
+export class NavBarComponent implements OnInit, OnDestroy {
 
     public user: IUser;
+    private destroy$: Subject<void> = new Subject<void>();
 
     constructor(private gitService: GitService) {
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.user = this.gitService.readUser();
-        this.gitService.getAuthUser().subscribe(
-            (data: IUser) => this.user = data
-        );
+        this.gitService.getAuthUser()
+            .pipe(
+                takeUntil(this.destroy$)
+            )
+            .subscribe(
+                (data: IUser) => this.user = data
+            );
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     public logout() {

@@ -1,6 +1,5 @@
+// ANGULAR
 import { Component, Input, OnInit, SimpleChanges, OnChanges } from '@angular/core';
-import { IUserSearch } from '@models/search';
-import {GitService} from '@services/git.service';
 
 @Component({
     selector: 'app-search-checked',
@@ -9,16 +8,15 @@ import {GitService} from '@services/git.service';
 })
 export class SearchCheckedComponent implements OnInit, OnChanges {
 
-    @Input() checkedUsers: IUserSearch[];
+    @Input() checkedUsers: [];
 
-    constructor(private gitService: GitService) {
+    constructor() {
     }
 
-    ngOnChanges(changes: SimpleChanges) {
+    ngOnChanges(changes: SimpleChanges): void {
       this.checkedUsers = changes.checkedUsers.currentValue;
-      this.gitService.getCheckedUsers(this.checkedUsers);
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
     }
 }
