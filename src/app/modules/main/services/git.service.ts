@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 // RXJS
-import { forkJoin, Observable, Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 // MODELS
 import { IProfile } from '@models/profile';
@@ -24,7 +24,7 @@ export class GitService {
     private clientSecret = environment.clientSecret;
     private redirectUri = environment.redirectUri;
     private authUrl = environment.authUrl;
-    private usersUrl = 'https://api.github.com/search/users';
+    private usersUrl = environment.usersUrl;
     private key = 'token';
     private subject$ = new Subject<any>();
 
@@ -82,25 +82,11 @@ export class GitService {
         return this.http.get<ISearch>(`${this.usersUrl}?q=${username}+in:login&page=${page}&per_page=${perPage}`);
     }
 
-    // ---------------------------------------------------
-    public getRepos(url: string): Observable<any> {
-        return this.http.get(url);
+    public searchUser(username: string): Observable<IProfile> {
+        return this.http.get<IProfile>(`https://api.github.com/users/${username}`);
     }
 
-    public getGists(url: string): Observable<any> {
+    public getInfo(url: string): Observable<any> {
         return this.http.get(url);
     }
 }
-
-
-// public getCheckedUsers(users: IUserSearch[]) {
-//     users.forEach((item, index) => {
-//             forkJoin(this.getRepos(item.repos_url), this.getGists(item.url + '/gists'))
-//                 .subscribe(res => console.log(res));
-//         }
-//     );
-// }
-//
-// public searchUser(username: string): Observable<IProfile> {
-//     return this.http.get<IProfile>(`https://api.github.com/users/${username}`);
-// }

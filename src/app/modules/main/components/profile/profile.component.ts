@@ -18,13 +18,13 @@ import { GitService } from '@services/git.service';
 })
 export class ProfileComponent implements OnInit {
 
+    private user: IUser;
     public profile$: Observable<IProfile>;
-    public user: IUser;
 
     constructor(private gitService: GitService) {
     }
 
-    ngOnInit() {
+    ngOnInit(): void {
         this.user = this.gitService.readUser();
         if (this.user) {
             this.profile$ = this.gitService.getProfile(this.user.token);

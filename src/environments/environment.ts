@@ -7,7 +7,8 @@ export const environment = {
     clientId: 'b9d368bff03d87c7b9ae',
     clientSecret: '5f65b02ff642bf23560f6f73d793b4f1b8387b70',
     redirectUri: 'http://localhost:4200/auth',
-    authUrl: 'https://github.com/login/oauth/'
+    authUrl: 'https://github.com/login/oauth/',
+    usersUrl: 'https://api.github.com/search/users'
 };
 
 /*

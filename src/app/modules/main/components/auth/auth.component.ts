@@ -4,7 +4,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 // RXJS
-import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 // MODELS
@@ -23,8 +23,8 @@ export class AuthComponent implements OnInit, OnDestroy {
 
     public authForm: FormGroup;
     private destroy$: Subject<void> = new Subject<void>();
-    public authCode: string;
     private token: string;
+    private authCode: string;
 
     constructor(private gitService: GitService, private router: Router, private route: ActivatedRoute) {
     }
@@ -49,10 +49,10 @@ export class AuthComponent implements OnInit, OnDestroy {
                     switchMap((resToken: IToken) => this.gitService.getProfile(resToken.access_token)),
                     takeUntil(this.destroy$)
                 ).subscribe(
-                    (resUser: IProfile) => {
-                        this.gitService.saveUser(this.token, resUser.login);
-                        window.location.href = '/search';
-                    }
+                (resUser: IProfile) => {
+                    this.gitService.saveUser(this.token, resUser.login);
+                    window.location.href = '/search';
+                }
             );
         }
     }

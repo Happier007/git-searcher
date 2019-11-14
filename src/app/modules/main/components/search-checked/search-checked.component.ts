@@ -14,7 +14,7 @@ export class SearchCheckedComponent implements OnInit, OnChanges {
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-      this.checkedUsers = changes.checkedUsers.currentValue;
+        this.checkedUsers = changes.checkedUsers.currentValue;
     }
 
     ngOnInit(): void {

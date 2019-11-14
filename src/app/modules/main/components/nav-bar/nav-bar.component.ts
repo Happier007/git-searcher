@@ -18,8 +18,8 @@ import { GitService } from '@services/git.service';
 })
 export class NavBarComponent implements OnInit, OnDestroy {
 
-    public user: IUser;
     private destroy$: Subject<void> = new Subject<void>();
+    public user: IUser;
 
     constructor(private gitService: GitService) {
     }

@@ -6,18 +6,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 // MATERIAL
 import { MatCheckboxChange } from '@angular/material';
 import { PageEvent, MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
 
 // CDK
 import { SelectionModel } from '@angular/cdk/collections';
 
 // RXJS
 import { forkJoin, Observable, Subject } from 'rxjs';
-import { pluck, takeUntil, tap } from 'rxjs/operators';
+import { map, mergeMap, pluck, takeUntil, tap } from 'rxjs/operators';
 
 // MAIN
 import { ISearch, IUserSearch } from '@models/search';
 import { GitService } from '@services/git.service';
+import { IProfile } from '@models/profile';
 
 
 @Component({
@@ -91,19 +91,41 @@ export class SearchComponent implements OnInit, OnDestroy {
             );
     }
 
-    public onChange(event: MatCheckboxChange, row: IUserSearch) {
+    private navigate(q: string, id: number) {
+        this.router.navigate([], {
+            queryParams: {
+                q,
+                id,
+                page: this.pageIndex,
+                per_page: this.pageSize
+            }
+        });
+    }
+
+    public onChange(event: MatCheckboxChange, row: IUserSearch): void {
         if (event.checked) {
-            forkJoin(this.gitService.getRepos(row.repos_url), this.gitService.getGists(row.url + '/gists'))
+            this.gitService.searchUser(row.login)
                 .pipe(
+                    mergeMap((user: IProfile) => {
+                            return forkJoin(this.gitService.getInfo(row.repos_url),
+                                this.gitService.getInfo(row.url + '/gists'))
+                                .pipe(
+                                    map((responses: any) => {
+                                        return {
+                                            profile: user,
+                                            repos: responses[0],
+                                            gists: responses[1]
+                                        };
+                                    })
+                                );
+                        }
+                    ),
                     takeUntil(this.destroy$)
-                )
-                .subscribe(
-                    (data) => {
-                        this.checkedUsers.push({info: row, data});
-                    }
-                );
+                ).subscribe(
+                (data) => this.checkedUsers.push(data)
+            );
         } else {
-            const delIndex = this.checkedUsers.findIndex(item => item.info === row);
+            const delIndex = this.checkedUsers.findIndex(item => item.profile.id === row.id);
             if (delIndex >= 0) {
                 this.checkedUsers.splice(delIndex, 1);
             }
@@ -128,15 +150,19 @@ export class SearchComponent implements OnInit, OnDestroy {
         }
         return event;
     }
-
-    public navigate(q: string, id: number) {
-        this.router.navigate([], {
-            queryParams: {
-                q,
-                id,
-                page: this.pageIndex,
-                per_page: this.pageSize
-            }
-        });
-    }
 }
+
+
+// forkJoin(this.gitService.getRepos(row.repos_url), this.gitService.getGists(row.url + '/gists'))
+//     .pipe(
+//         takeUntil(this.destroy$)
+//     )
+//     .subscribe(
+//         (data) => {
+//             this.checkedUsers.push({
+//                 info: row,
+//                 repos: data[0],
+//                 gists: data[1],
+//             });
+//         }
+//     );
