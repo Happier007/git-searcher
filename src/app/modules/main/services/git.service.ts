@@ -1,7 +1,7 @@
 // ANGULAR
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 // RXJS
 import { Observable, Subject } from 'rxjs';
@@ -23,16 +23,25 @@ export class GitService {
     private clientId = environment.clientId;
     private clientSecret = environment.clientSecret;
     private redirectUri = environment.redirectUri;
-    private authUrl = environment.authUrl;
-    private usersUrl = environment.usersUrl;
     private key = 'token';
     private subject$ = new Subject<any>();
 
-    constructor(private http: HttpClient, private router: Router) {
+    constructor(private http: HttpClient,
+                private route: ActivatedRoute,
+                private router: Router) {
     }
 
     public auth(login: string) {
-        window.location.href = `${this.authUrl}authorize?client_id=${this.clientId}&redirect_uri=${this.redirectUri}&login=${login}`;
+        const queryParams = {
+            client_id: this.clientId,
+            redirect_uri: this.redirectUri,
+            login
+        };
+        const urlTree = this.router.createUrlTree(['oauth/authorize/'], {
+            queryParams
+        });
+
+        location.href = `https://github.com/login${urlTree.toString()}`;
     }
 
     public getToken(code: string): Observable<IToken> {
@@ -50,7 +59,7 @@ export class GitService {
 
     public getProfile(token: string): Observable<IProfile> {
         const headers = {
-            Authorization: 'token ' + token
+            Authorization: `token ${token}`
         };
         return this.http.get<IProfile>('https://api.github.com/user', {headers});
     }
@@ -78,15 +87,24 @@ export class GitService {
         this.router.navigate(['/auth']);
     }
 
-    public searchUsers(username: string, page: string, perPage: string): Observable<ISearch> {
-        return this.http.get<ISearch>(`${this.usersUrl}?q=${username}+in:login&page=${page}&per_page=${perPage}`);
+    public searchUsers(username: string, page: number, perPage: number): Observable<ISearch> {
+        const queryParams = {
+            q: `${username}in:login`,
+            page: page.toString(),
+            per_page: perPage.toString()
+        };
+        return this.http.get<ISearch>('https://api.github.com/search/users', {params: queryParams});
     }
 
     public searchUser(username: string): Observable<IProfile> {
         return this.http.get<IProfile>(`https://api.github.com/users/${username}`);
     }
 
-    public getInfo(url: string): Observable<any> {
+    public getRepos(url: string): Observable<any> {
         return this.http.get(url);
+    }
+
+    public getGists(url: string): Observable<any> {
+        return this.http.get(`${url}/gists`);
     }
 }

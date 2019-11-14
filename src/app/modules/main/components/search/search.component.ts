@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 // MATERIAL
 import { MatCheckboxChange } from '@angular/material';
-import { PageEvent, MatPaginator } from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 
 // CDK
 import { SelectionModel } from '@angular/cdk/collections';
@@ -19,7 +19,6 @@ import { ISearch, IUserSearch } from '@models/search';
 import { GitService } from '@services/git.service';
 import { IProfile } from '@models/profile';
 
-
 @Component({
     selector: 'app-search',
     templateUrl: './search.component.html',
@@ -27,9 +26,7 @@ import { IProfile } from '@models/profile';
 })
 export class SearchComponent implements OnInit, OnDestroy {
 
-    @Output() checkedUsers = [];
-    @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
-
+    @Output() checkedUsers: any = [];
     private searchForm: FormGroup;
     private searchName: string;
     private searchId: string;
@@ -42,7 +39,9 @@ export class SearchComponent implements OnInit, OnDestroy {
     public displayedColumns: string[] = ['select', 'ava', 'login', 'url'];
     public selection = new SelectionModel<IUserSearch>(true, []);
 
-    constructor(private gitService: GitService, private router: Router, private route: ActivatedRoute) {
+    constructor(private router: Router,
+                private route: ActivatedRoute,
+                private gitService: GitService) {
         this.searchName = this.route.snapshot.queryParamMap.get('q');
         this.searchId = this.route.snapshot.queryParamMap.get('id');
         this.pageSize = Number(this.route.snapshot.queryParamMap.get('per_page')) || this.pageSize;
@@ -52,7 +51,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.initForm();
         if (this.searchName) {
-            this.downloadUsers(this.searchName);
+            this.loadUsers(this.searchName);
         }
     }
 
@@ -71,27 +70,12 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     private submitForm(form): void {
-        this.navigate(form.username, null);
+        this.updateParams(form.username, null);
         this.searchName = form.username;
-        this.downloadUsers(form.username);
+        this.loadUsers(form.username);
     }
 
-    private downloadUsers(username: string): void {
-        this.users$ = this.gitService.searchUsers(username, this.pageIndex.toString(), this.pageSize.toString())
-            .pipe(
-                tap((res: ISearch) => {
-                    this.countUsers = res.total_count;
-                }),
-                pluck('items'),
-                tap((users: IUserSearch[]) => {
-                    if (this.searchId) {
-                        this.selectedUser = users.find(item => item.id.toString() === this.searchId);
-                    }
-                })
-            );
-    }
-
-    private navigate(q: string, id: number) {
+    private updateParams(q: string, id: number) {
         this.router.navigate([], {
             queryParams: {
                 q,
@@ -102,56 +86,71 @@ export class SearchComponent implements OnInit, OnDestroy {
         });
     }
 
-    public onChange(event: MatCheckboxChange, row: IUserSearch): void {
-        if (event.checked) {
-            this.gitService.searchUser(row.login)
-                .pipe(
-                    mergeMap((user: IProfile) => {
-                            return forkJoin(this.gitService.getInfo(row.repos_url),
-                                this.gitService.getInfo(row.url + '/gists'))
-                                .pipe(
-                                    map((responses: any) => {
-                                        return {
-                                            profile: user,
-                                            repos: responses[0],
-                                            gists: responses[1]
-                                        };
-                                    })
-                                );
-                        }
-                    ),
-                    takeUntil(this.destroy$)
-                ).subscribe(
-                (data) => this.checkedUsers.push(data)
+    private loadUsers(username: string): void {
+        this.users$ = this.gitService.searchUsers(username, this.pageIndex, this.pageSize)
+            .pipe(
+                tap((res: ISearch) => {
+                    this.countUsers = res.total_count;
+                }),
+                pluck('items'),
+                tap((users: any) => {
+                    if (this.searchId) {
+                        this.selectedUser = users.find(item => item.id.toString() === this.searchId);
+                    }
+                })
             );
-        } else {
-            const delIndex = this.checkedUsers.findIndex(item => item.profile.id === row.id);
-            if (delIndex >= 0) {
-                this.checkedUsers.splice(delIndex, 1);
-            }
-        }
-    }
-
-    public checkboxLabel(row?: IUserSearch): string {
-        return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row`;
     }
 
     public selectRow(row): void {
         this.selectedUser = row;
-        this.navigate(this.searchName, row.id);
+        this.updateParams(this.searchName, row.id);
     }
 
-    public getPaginatorData(event: PageEvent): PageEvent {
+    public paginatorEvent(event: PageEvent): void {
         this.pageSize = event.pageSize;
         this.pageIndex = event.pageIndex;
         if (this.searchName) {
-            this.navigate(this.searchName, null);
-            this.downloadUsers(this.searchName);
+            this.updateParams(this.searchName, null);
+            this.loadUsers(this.searchName);
         }
-        return event;
+    }
+
+    public onChange(event: MatCheckboxChange, row: IUserSearch): void {
+        if (event.checked) {
+            this.addUser(row.login);
+        } else {
+            this.removeUser(row.id);
+        }
+    }
+
+    private addUser(login: string): void {
+        this.gitService.searchUser(login)
+            .pipe(
+                mergeMap((user: IProfile) => {
+                        return forkJoin(
+                            this.gitService.getRepos(user.repos_url),
+                            this.gitService.getGists(user.url))
+                            .pipe(
+                                map((responses: any) => {
+                                    return {
+                                        profile: user,
+                                        repos: responses[0],
+                                        gists: responses[1]
+                                    };
+                                })
+                            );
+                    }
+                ),
+                takeUntil(this.destroy$)
+            ).subscribe(
+            (data) => this.checkedUsers.push(data)
+        );
+    }
+
+    private removeUser(id: number): void {
+        this.checkedUsers = this.checkedUsers.filter(item => item.profile.id !== id);
     }
 }
-
 
 // forkJoin(this.gitService.getRepos(row.repos_url), this.gitService.getGists(row.url + '/gists'))
 //     .pipe(

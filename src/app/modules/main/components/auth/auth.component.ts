@@ -26,7 +26,9 @@ export class AuthComponent implements OnInit, OnDestroy {
     private token: string;
     private authCode: string;
 
-    constructor(private gitService: GitService, private router: Router, private route: ActivatedRoute) {
+    constructor(private router: Router,
+                private route: ActivatedRoute,
+                private gitService: GitService) {
     }
 
     ngOnInit() {
@@ -40,7 +42,6 @@ export class AuthComponent implements OnInit, OnDestroy {
     }
 
     private getCode(): void {
-
         this.authCode = this.route.snapshot.queryParamMap.get('code');
         if (this.authCode) {
             this.gitService.getToken(this.authCode)
@@ -51,7 +52,7 @@ export class AuthComponent implements OnInit, OnDestroy {
                 ).subscribe(
                 (resUser: IProfile) => {
                     this.gitService.saveUser(this.token, resUser.login);
-                    window.location.href = '/search';
+                    this.router.navigate(['/search']);
                 }
             );
         }

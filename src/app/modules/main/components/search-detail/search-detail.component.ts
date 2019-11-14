@@ -26,7 +26,7 @@ export class SearchDetailComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.repos = this.gitService.getInfo(this.user.repos_url);
-        this.gists = this.gitService.getInfo(this.user.url + '/gists');
+        this.repos = this.gitService.getRepos(this.user.repos_url);
+        this.gists = this.gitService.getGists(this.user.url);
     }
 }
