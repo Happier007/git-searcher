@@ -47,7 +47,8 @@
                     <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
                     <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></mat-row>
                 </mat-table>
-                <mat-paginator [length]=countUsers
+                <mat-paginator #paginator
+                               [length]=countUsers
                                [pageIndex]="pageIndex"
                                [pageSize]="pageSize"
                                [pageSizeOptions]="[10, 20, 30]"

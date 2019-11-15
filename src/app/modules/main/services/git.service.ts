@@ -90,7 +90,7 @@ export class GitService {
     public searchUsers(username: string, page: number, perPage: number): Observable<ISearch> {
         const queryParams = {
             q: `${username}in:login`,
-            page: page.toString(),
+            page: (page + 1).toString(),
             per_page: perPage.toString()
         };
         return this.http.get<ISearch>('https://api.github.com/search/users', {params: queryParams});

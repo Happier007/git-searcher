@@ -1,11 +1,11 @@
 // ANGULAR
-import { Component, OnInit, OnDestroy, Output, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 // MATERIAL
 import { MatCheckboxChange } from '@angular/material';
-import { PageEvent } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 // CDK
 import { SelectionModel } from '@angular/cdk/collections';
@@ -34,7 +34,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     public users$: Observable<IUserSearch[]> = new Observable<IUserSearch[]>();
     public selectedUser: IUserSearch;
     public countUsers: number;
-    public pageIndex = 1;
+    public pageIndex = 0;
     public pageSize = 10;
     public displayedColumns: string[] = ['select', 'ava', 'login', 'url'];
     public selection = new SelectionModel<IUserSearch>(true, []);
@@ -70,12 +70,14 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     private submitForm(form): void {
-        this.updateParams(form.username, null);
         this.searchName = form.username;
-        this.loadUsers(form.username);
+        this.updateQueryParams(this.searchName, null, 0, 10);
+        this.loadUsers(this.searchName);
     }
 
-    private updateParams(q: string, id: number) {
+    private updateQueryParams(q: string, id: number = null, pageIndex?: number, pageSize?: number) {
+        this.pageIndex = pageIndex || this.pageIndex;
+        this.pageSize = pageSize || this.pageSize;
         this.router.navigate([], {
             queryParams: {
                 q,
@@ -95,7 +97,7 @@ export class SearchComponent implements OnInit, OnDestroy {
                 pluck('items'),
                 tap((users: any) => {
                     if (this.searchId) {
-                        this.selectedUser = users.find(item => item.id.toString() === this.searchId);
+                        this.selectedUser = users.filter(item => item.id.toString() === this.searchId);
                     }
                 })
             );
@@ -103,16 +105,17 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     public selectRow(row): void {
         this.selectedUser = row;
-        this.updateParams(this.searchName, row.id);
+        this.updateQueryParams(this.searchName, row.id);
     }
 
-    public paginatorEvent(event: PageEvent): void {
+    public paginatorEvent(event: PageEvent): PageEvent {
         this.pageSize = event.pageSize;
         this.pageIndex = event.pageIndex;
         if (this.searchName) {
-            this.updateParams(this.searchName, null);
+            this.updateQueryParams(this.searchName);
             this.loadUsers(this.searchName);
         }
+        return event;
     }
 
     public onChange(event: MatCheckboxChange, row: IUserSearch): void {
