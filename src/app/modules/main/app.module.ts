@@ -2,7 +2,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from '../../app-routing.module';
@@ -17,9 +17,10 @@ import {
     NavBarComponent,
     ProfileComponent,
     SearchComponent,
+    SearchDetailComponent,
+    SearchCheckedComponent
 } from './components';
-import { SearchDetailComponent } from './components/search-detail/search-detail.component';
-import { SearchCheckedComponent } from './components/search-checked/search-checked.component';
+import { LogInterseptor } from './interceptors/log.interseptor';
 
 
 
@@ -42,7 +43,13 @@ import { SearchCheckedComponent } from './components/search-checked/search-check
         HttpClientModule,
         AppMaterialModule,
     ],
-    providers: [],
+    providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: LogInterseptor,
+            multi: true
+        }
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {
