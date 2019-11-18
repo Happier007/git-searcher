@@ -1,13 +1,40 @@
 <div fxLayout="column">
-    <form [formGroup]="searchForm" (submit)="submitForm(searchForm.value)" class="form" fxLayout="row"
-          fxLayoutGap="25px">
+
+    <!--    <form [formGroup]="searchForm" (submit)="submitForm(searchForm.value)" class="form" fxLayout="row"-->
+    <!--          fxLayoutGap="25px">-->
+    <!--        <mat-form-field fxFlex="37%" fxFlexOffset="20px">-->
+    <!--            <input matInput placeholder="Username" formControlName="username">-->
+    <!--            <mat-icon matSuffix>search</mat-icon>-->
+    <!--        </mat-form-field>-->
+    <!--    </form>-->
+
+    <form [formGroup]="searchForm" (submit)="submitForm(searchForm.value)" class="form" fxLayout="row" fxLayoutGap="25px">
         <mat-form-field fxFlex="37%" fxFlexOffset="20px">
-            <input matInput placeholder="Username" formControlName="username">
+            <mat-chip-list #chipList aria-label="User selection">
+                <mat-chip
+                        *ngFor="let chips of chipses"
+                        (removed)="remove(chips)">
+                    {{chips}}
+                    <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                </mat-chip>
+                <input
+                        placeholder="User ..."
+                        #usernameInput
+                        formControlName="username"
+                        [matAutocomplete]="auto"
+                        [matChipInputFor]="chipList"
+                        [matChipInputAddOnBlur]="addOnBlur">
+            </mat-chip-list>
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+                <mat-option *ngFor="let user of usersChips$ | async" [value]="user">
+                    {{user.login}}
+                </mat-option>
+            </mat-autocomplete>
             <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
     </form>
-    <mat-divider></mat-divider>
 
+    <mat-divider></mat-divider>
     <div fxLayout="row" fxLayoutGap="10px" fxFlex="100">
         <div fxFlex="40">
             <div *ngIf="(users$ | async) as users">

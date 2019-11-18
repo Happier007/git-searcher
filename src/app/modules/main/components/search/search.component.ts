@@ -1,5 +1,5 @@
 // ANGULAR
-import { Component, OnInit, OnDestroy, Output } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -12,12 +12,13 @@ import { SelectionModel } from '@angular/cdk/collections';
 
 // RXJS
 import { forkJoin, Observable, Subject } from 'rxjs';
-import { map, mergeMap, pluck, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, map, mergeMap, pluck, takeUntil, tap } from 'rxjs/operators';
 
 // MAIN
 import { ISearch, IUserSearch } from '@models/search';
 import { GitService } from '@services/git.service';
 import { IProfile } from '@models/profile';
+import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 @Component({
     selector: 'app-search',
@@ -27,6 +28,7 @@ import { IProfile } from '@models/profile';
 export class SearchComponent implements OnInit, OnDestroy {
 
     @Output() checkedUsers: any = [];
+    @ViewChild('usernameInput', {static: false}) usernameInput: ElementRef<HTMLInputElement>;
     private searchForm: FormGroup;
     private searchName: string;
     private searchId: string;
@@ -38,6 +40,15 @@ export class SearchComponent implements OnInit, OnDestroy {
     public pageSize = 10;
     public displayedColumns: string[] = ['select', 'ava', 'login', 'url'];
     public selection = new SelectionModel<IUserSearch>(true, []);
+
+    selectable = true;
+    removable = true;
+    addOnBlur = true;
+    chipses: string[] = [];
+    public usersChips$: Observable<IUserSearch[]> = new Observable<IUserSearch[]>();
+
+    @ViewChild('fruitInput', {static: false}) fruitInput: ElementRef<HTMLInputElement>;
+    @ViewChild('auto', {static: false}) matAutocomplete: MatAutocomplete;
 
     constructor(private router: Router,
                 private route: ActivatedRoute,
@@ -67,6 +78,18 @@ export class SearchComponent implements OnInit, OnDestroy {
                 Validators.pattern(/^[A-z0-9]*$/),
                 Validators.minLength(3)]),
         });
+
+        const usernameCtrl = this.searchForm.get('username');
+        this.searchForm.get('username').valueChanges
+            .pipe(
+                takeUntil(this.destroy$)
+            )
+            .subscribe(
+                uname => {
+                    console.log('Username changed:' + uname);
+                    this.loadChips(uname, usernameCtrl);
+                }
+            );
     }
 
     private submitForm(form): void {
@@ -97,9 +120,20 @@ export class SearchComponent implements OnInit, OnDestroy {
                 pluck('items'),
                 tap((users: any) => {
                     if (this.searchId) {
-                        this.selectedUser = users.filter(item => item.id.toString() === this.searchId);
+                        this.selectedUser = users.find(item => item.id.toString() === this.searchId);
                     }
                 })
+            );
+    }
+
+    private loadChips(username: string, usernameCtrl: any): void {
+        this.usersChips$ = this.gitService.searchUsers(username, this.pageIndex, this.pageSize)
+            .pipe(
+                debounceTime(1000),
+                tap((res: ISearch) => {
+                    this.countUsers = res.total_count;
+                }),
+                pluck('items'),
             );
     }
 
@@ -152,6 +186,19 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     private removeUser(id: number): void {
         this.checkedUsers = this.checkedUsers.filter(item => item.profile.id !== id);
+    }
+
+    remove(user: string): void {
+        const index = this.chipses.indexOf(user);
+        if (index >= 0) {
+            this.chipses.splice(index, 1);
+        }
+    }
+
+    selected(event: MatAutocompleteSelectedEvent): void {
+        this.chipses.push(event.option.viewValue);
+        this.usernameInput.nativeElement.value = '';
+        this.loadUsers(event.option.viewValue);
     }
 }
 
