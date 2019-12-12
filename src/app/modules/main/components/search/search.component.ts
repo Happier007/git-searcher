@@ -6,7 +6,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 // MATERIAL
 import { MatCheckboxChange } from '@angular/material';
 import { PageEvent } from '@angular/material/paginator';
-import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 // CDK
 import { SelectionModel } from '@angular/cdk/collections';
@@ -15,11 +14,12 @@ import { SelectionModel } from '@angular/cdk/collections';
 import { forkJoin, Observable, Subject } from 'rxjs';
 import { debounceTime, map, mergeMap, pluck, takeUntil, tap } from 'rxjs/operators';
 
-// MAIN
+// MODELS
 import { ISearch, IUserSearch } from '@models/search';
-import { GitService } from '@services/git.service';
 import { IProfile } from '@models/profile';
 
+// MAIN
+import { GitService } from '@services/git.service';
 
 @Component({
     selector: 'app-search',
@@ -157,17 +157,3 @@ export class SearchComponent implements OnInit, OnDestroy {
         this.checkedUsers = this.checkedUsers.filter(item => item.profile.id !== id);
     }
 }
-
-// forkJoin(this.gitService.getRepos(row.repos_url), this.gitService.getGists(row.url + '/gists'))
-//     .pipe(
-//         takeUntil(this.destroy$)
-//     )
-//     .subscribe(
-//         (data) => {
-//             this.checkedUsers.push({
-//                 info: row,
-//                 repos: data[0],
-//                 gists: data[1],
-//             });
-//         }
-//     );

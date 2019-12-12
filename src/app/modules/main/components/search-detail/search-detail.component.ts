@@ -10,7 +10,6 @@ import { IUserSearch } from '@models/search';
 // MAIN
 import { GitService } from '@services/git.service';
 
-
 @Component({
     selector: 'app-search-detail',
     templateUrl: './search-detail.component.html',

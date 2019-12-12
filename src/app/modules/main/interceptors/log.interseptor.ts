@@ -6,7 +6,7 @@ import {
     HttpResponse,
     HttpErrorResponse
 } from '@angular/common/http';
-import { EMPTY, Observable, throwError } from 'rxjs';
+import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { Log } from '@models/log';
 
@@ -32,7 +32,6 @@ export class LogInterseptor implements HttpInterceptor {
                 ),
                 catchError((error: HttpErrorResponse) => {
                          return EMPTY;
-                        // return throwError(error);
                     }
                 )
             );

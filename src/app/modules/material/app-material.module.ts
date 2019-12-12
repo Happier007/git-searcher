@@ -12,32 +12,27 @@ import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatPaginatorModule } from '@angular/material/paginator';
 
+const MODULES = [
+    MatToolbarModule,
+    MatCardModule,
+    MatDividerModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatTableModule,
+    MatTabsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatPaginatorModule
+]
+
 @NgModule({
     declarations: [],
     imports: [
         CommonModule,
-        MatToolbarModule,
-        MatCardModule,
-        MatDividerModule,
-        MatCheckboxModule,
-        MatIconModule,
-        MatTableModule,
-        MatTabsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatPaginatorModule,
+        MODULES
     ],
     exports: [
-        MatToolbarModule,
-        MatCardModule,
-        MatDividerModule,
-        MatCheckboxModule,
-        MatIconModule,
-        MatTableModule,
-        MatTabsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatPaginatorModule,
+        MODULES
     ],
 })
 export class AppMaterialModule {
