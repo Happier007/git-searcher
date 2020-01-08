@@ -11,6 +11,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
 
 const MODULES = [
     MatToolbarModule,
@@ -22,7 +25,10 @@ const MODULES = [
     MatTabsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatChipsModule,
+    MatAutocompleteModule,
+    MatButtonModule,
 ]
 
 @NgModule({

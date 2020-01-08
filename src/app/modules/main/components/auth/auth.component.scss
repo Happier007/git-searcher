@@ -1,9 +1,10 @@
-h1 {
-  font-size: 20px;
-  margin: 40px 0 10px;
-}
-
-.form {
-  padding: 10px;
-  border: 1px solid grey;
+//background: linear-gradient(to bottom, #2fc752, #269f42);
+.auth {
+    margin-top: 5%;
+    .header-image {
+        height: 60px;
+        width: 60px;
+        background-image: url('../../../../../assets/github-logo.png');
+        background-size: cover;
+    }
 }

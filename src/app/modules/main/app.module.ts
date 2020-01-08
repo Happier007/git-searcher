@@ -21,10 +21,6 @@ import {
     SearchCheckedComponent
 } from './components';
 import { LogInterseptor } from './interceptors/log.interseptor';
-import { MatChipsModule } from "@angular/material/chips";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-
-
 
 @NgModule({
     declarations: [
@@ -44,8 +40,6 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
         FlexLayoutModule,
         HttpClientModule,
         AppMaterialModule,
-        MatChipsModule,
-        MatAutocompleteModule,
     ],
     providers: [
         {
