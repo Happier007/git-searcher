@@ -1,6 +1,6 @@
 // ANGULAR
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
 // RXJS
@@ -21,18 +21,18 @@ import { GitService } from '@services/git.service';
 })
 export class AuthComponent implements OnInit, OnDestroy {
 
-    public authForm: FormGroup;
+    public authForm: FormGroup = this.buildForm();
     private destroy$: Subject<void> = new Subject<void>();
     private token: string;
     private authCode: string;
 
     constructor(private router: Router,
                 private route: ActivatedRoute,
-                private gitService: GitService) {
+                private gitService: GitService,
+                private fb: FormBuilder) {
     }
 
     ngOnInit() {
-        this.initForm();
         this.getCode();
     }
 
@@ -58,12 +58,10 @@ export class AuthComponent implements OnInit, OnDestroy {
         }
     }
 
-    private initForm(): void {
-        this.authForm = new FormGroup({
+    private buildForm(): FormGroup {
+        return this.fb.group({
             username: new FormControl('', [
-                Validators.required,
-                Validators.pattern(/^[A-z0-9]*$/),
-                Validators.minLength(3)]),
+                Validators.required]),
         });
     }
 
@@ -71,7 +69,7 @@ export class AuthComponent implements OnInit, OnDestroy {
         this.auth(form.username);
     }
 
-    private auth(login: string) {
+    private auth(login: string): void {
         this.gitService.auth(login);
     }
 }
