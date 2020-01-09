@@ -75,6 +75,8 @@ export class SearchComponent implements OnInit, OnDestroy {
             this.searchName = this.searchForm.value.username;
             this.updateQueryParams(this.searchName, null, 0, 10);
             this.loadUsers(this.searchName);
+            this.selectedUser = null;
+            this.checkedUsers = [];
         }
     }
 
