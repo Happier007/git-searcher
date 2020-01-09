@@ -12,7 +12,7 @@
                     <span matBadge="{{repos.length}}" matBadgeOverlap="false" matBadgeColor="warn">Repos</span>
                 </ng-template>
                 <mat-list>
-                    <a mat-list-item *ngFor="let repo of repos"
+                    <a mat-list-item *ngFor="let repo of repos; trackBy: trackByFn"
                        [href]=repo.html_url>
                         <mat-icon mat-list-icon>folder_special</mat-icon>
                         <h4 mat-line>{{repo.name}}</h4>

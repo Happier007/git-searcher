@@ -35,7 +35,7 @@
                         </ng-container>
 
                         <ng-container matColumnDef="ava">
-                            <mat-header-cell *matHeaderCellDef>ava</mat-header-cell>
+                            <mat-header-cell *matHeaderCellDef>avatar</mat-header-cell>
                             <mat-cell *matCellDef="let element">
                                 <img src="{{element.avatar_url}}" class="search-avatar">
                             </mat-cell>
@@ -60,7 +60,7 @@
                             <mat-cell *matCellDef="let element"
                                       [matTooltip]="element.html_url"
                                       matTooltipPosition="above">
-                                <a [href]="element.html_url" style="color: black">Git</a>
+                                <a [href]="element.html_url"><mat-icon>arrow_forward</mat-icon></a>
                             </mat-cell>
                         </ng-container>
 

@@ -1,17 +1,30 @@
 @import '~@angular/material/theming';
+
 @include mat-core();
 $github-app-primary: mat-palette($mat-blue-grey, 900, A100, 50, 800);
-$github-app-accent:  mat-palette($mat-green, 700, 900, A100);
+$github-app-accent: mat-palette($mat-green, 700, 900, A100);
 $github-app-warn: mat-palette($mat-red);
 $github-app-theme: mat-light-theme($github-app-primary, $github-app-accent, $github-app-warn);
 @include angular-material-theme($github-app-theme);
 
 /* You can add global styles to this file, and also import other style files */
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .search-avatar {
     background-size: cover;
     height: 35px;
     width: 35px;
 }
+
+a {
+    text-decoration: none;
+}
+
+

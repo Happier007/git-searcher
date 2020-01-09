@@ -1,5 +1,5 @@
 <div fxLayout="column" fxLayoutGap="10px">
-    <mat-accordion *ngFor="let user of checkedUsers">
+    <mat-accordion *ngFor="let user of checkedUsers;trackBy: trackByFn">
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -19,11 +19,11 @@
                 <mat-tab-group color="warn" backgroundColor="primary">
                     <mat-tab *ngIf="user.repos">
                         <ng-template matTabLabel>
-                            <span matBadge="{{user.repos.length}}" matBadgeOverlap="false"
+                            <span matBadge="{{user.profile.public_repos}}" matBadgeOverlap="false"
                                   matBadgeColor="warn">Repos</span>
                         </ng-template>
                         <mat-list>
-                            <a mat-list-item *ngFor="let repo of user.repos"
+                            <a mat-list-item *ngFor="let repo of user.repos; trackBy: trackByFn"
                                [href]=repo.html_url>
                                 <mat-icon mat-list-icon>folder_special</mat-icon>
                                 <h4 mat-line>{{repo.name}}</h4>
@@ -32,11 +32,11 @@
                     </mat-tab>
                     <mat-tab *ngIf="user.gists">
                         <ng-template matTabLabel>
-                            <span matBadge="{{user.gists.length}}" matBadgeOverlap="false"
+                            <span matBadge="{{user.profile.public_gists}}" matBadgeOverlap="false"
                                   matBadgeColor="warn">Gists</span>
                         </ng-template>
                         <mat-list>
-                            <a mat-list-item *ngFor="let gist of user.gists"
+                            <a mat-list-item *ngFor="let gist of user.gists; trackBy: trackByFn"
                                [href]=gist.html_url>
                                 <mat-icon mat-list-icon>folder_special</mat-icon>
                                 <h4 mat-line>{{gist.description || '---'}}</h4>

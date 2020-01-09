@@ -16,4 +16,8 @@ export class SearchCheckedComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         this.checkedUsers = changes.checkedUsers.currentValue;
     }
+
+    public trackByFn(_: number, item: any): number {
+        return item.id;
+    }
 }

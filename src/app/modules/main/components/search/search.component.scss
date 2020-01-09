@@ -11,6 +11,10 @@ form {
 mat-table {
     width: 100%;
 
+    a {
+        color: black;
+    }
+
     mat-cell {
         cursor: pointer;
     }

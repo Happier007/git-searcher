@@ -33,4 +33,8 @@ export class SearchDetailComponent implements OnInit, OnChanges {
 
     ngOnInit() {
     }
+
+    public trackByFn(_: number, item: any) {
+        return item.id;
+    }
 }
