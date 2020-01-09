@@ -1,6 +1,6 @@
 // ANGULAR
 import { Component, OnInit, OnDestroy, Output, ViewChild, ElementRef } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
 // MATERIAL
@@ -30,7 +30,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     @Output() checkedUsers: any = [];
     @ViewChild('usernameInput', {static: false}) usernameInput: ElementRef<HTMLInputElement>;
-    private searchForm: FormGroup;
+    private searchForm: FormGroup = this.buildForm();
     private searchName: string;
     private searchId: string;
     private destroy$: Subject<void> = new Subject<void>();
@@ -44,7 +44,8 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     constructor(private router: Router,
                 private route: ActivatedRoute,
-                private gitService: GitService) {
+                private gitService: GitService,
+                private fb: FormBuilder) {
         this.searchName = this.route.snapshot.queryParamMap.get('q');
         this.searchId = this.route.snapshot.queryParamMap.get('id');
         this.pageSize = Number(this.route.snapshot.queryParamMap.get('per_page')) || this.pageSize;
@@ -52,7 +53,6 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit(): void {
-        this.initForm();
         if (this.searchName) {
             this.loadUsers(this.searchName);
         }
@@ -63,19 +63,19 @@ export class SearchComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    private initForm(): void {
-        this.searchForm = new FormGroup({
+    private buildForm(): FormGroup {
+        return this.fb.group({
             username: new FormControl('', [
-                Validators.required,
-                Validators.pattern(/^[A-z0-9]*$/),
-                Validators.minLength(3)]),
+                Validators.required])
         });
     }
 
-    private submitForm(form): void {
-        this.searchName = form.username;
-        this.updateQueryParams(this.searchName, null, 0, 10);
-        this.loadUsers(this.searchName);
+    private submitForm(): void {
+        if (this.searchForm.valid) {
+            this.searchName = this.searchForm.value.username;
+            this.updateQueryParams(this.searchName, null, 0, 10);
+            this.loadUsers(this.searchName);
+        }
     }
 
     private updateQueryParams(q: string, id: number = null, pageIndex?: number, pageSize?: number) {

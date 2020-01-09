@@ -1,9 +1,12 @@
 <div fxLayout="column" fxFlex="100" fxLayoutGap="15px">
     <mat-card>
-        <form [formGroup]="searchForm" (submit)="submitForm(searchForm.value)" fxLayout="row">
+        <form [formGroup]="searchForm" (submit)="submitForm()" fxLayout="row">
             <mat-form-field fxFlex="34%" fxFlexOffset="20px">
                 <input matInput placeholder="Username" formControlName="username">
-                <mat-icon matSuffix>search</mat-icon>
+                <mat-icon (click)="submitForm()" matSuffix>search</mat-icon>
+                <mat-error *ngIf="searchForm.get('username').touched && searchForm.get('username').invalid && searchForm.get('username').errors.required">
+                    Please enter the field
+                </mat-error>
             </mat-form-field>
         </form>
     </mat-card>

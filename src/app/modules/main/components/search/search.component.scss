@@ -2,6 +2,11 @@
     height: 50vh;
 }
 
+form{
+    mat-icon{
+        cursor: pointer;
+    }
+}
 
 mat-table {
     width: 100%;
