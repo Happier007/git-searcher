@@ -39,7 +39,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     public countUsers: number;
     public pageIndex = 0;
     public pageSize = 10;
-    public displayedColumns: string[] = ['select', 'ava', 'login', 'url'];
+    public displayedColumns: string[] = ['select', 'ava', 'login', 'score', 'url'];
     public selection = new SelectionModel<IUserSearch>(true, []);
 
     constructor(private router: Router,
@@ -122,11 +122,38 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     public onChange(event: MatCheckboxChange, row: IUserSearch): void {
+        if (event) {
+            this.selection.toggle(row);
+        }
         if (event.checked) {
             this.addUser(row.login);
         } else {
             this.removeUser(row.id);
         }
+    }
+
+    /** Whether the number of selected elements matches the total number of rows. */
+    isAllSelected(users) {
+        const numSelected = this.selection.selected.length;
+        const numRows = users.length;
+        return numSelected === numRows;
+    }
+
+    /** Selects all rows if they are not all selected; otherwise clear selection. */
+    masterToggle(users) {
+        this.isAllSelected(users) ?
+            this.clearTable(users) :
+            users.forEach(row => {
+                this.selection.select(row);
+                this.addUser(row.login);
+            });
+    }
+
+    clearTable(users) {
+        this.selection.clear();
+        users.forEach(row => {
+            this.removeUser(row.id);
+        });
     }
 
     private addUser(login: string): void {

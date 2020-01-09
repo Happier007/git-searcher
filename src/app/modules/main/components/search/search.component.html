@@ -1,57 +1,75 @@
-<div fxLayout="column">
-    <form [formGroup]="searchForm" (submit)="submitForm(searchForm.value)" class="form" fxLayout="row" fxLayoutGap="25px">
-        <mat-form-field fxFlex="37%" fxFlexOffset="20px">
-            <input matInput placeholder="Username" formControlName="username">
-            <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-    </form>
-    <mat-divider></mat-divider>
-    <div fxLayout="row" fxLayoutGap="10px" fxFlex="100">
-        <div fxFlex="40">
+<div fxLayout="column" fxFlex="100" fxLayoutGap="15px">
+    <mat-card>
+        <form [formGroup]="searchForm" (submit)="submitForm(searchForm.value)" fxLayout="row">
+            <mat-form-field fxFlex="34%" fxFlexOffset="20px">
+                <input matInput placeholder="Username" formControlName="username">
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+        </form>
+    </mat-card>
+    <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-around start">
+        <div fxFlex="35">
             <div *ngIf="(users$ | async) as users">
-                <mat-table *ngIf="users" [dataSource]="users" fxLayoutGap="20px">
+                <mat-card fxLayoutGap="20px">
+                    <mat-table *ngIf="users" [dataSource]="users">
 
-                    <ng-container matColumnDef="select">
-                        <mat-header-cell *matHeaderCellDef fxFlex="10"></mat-header-cell>
-                        <mat-cell *matCellDef="let row" fxFlex="10">
-                            <mat-checkbox (click)="$event.stopPropagation()"
-                                          (change)="onChange($event,row)"
-                                          [checked]="selection.isSelected(row)">
-                            </mat-checkbox>
-                        </mat-cell>
-                    </ng-container>
+                        <ng-container matColumnDef="select">
+                            <mat-header-cell *matHeaderCellDef>
+                                <mat-checkbox color="warn"
+                                              (change)="$event ? masterToggle(users) : null"
+                                              [checked]="selection.hasValue() && isAllSelected(users)"
+                                              [indeterminate]="selection.hasValue() && !isAllSelected(users)">
+                                </mat-checkbox>
+                            </mat-header-cell>
+                            <mat-cell *matCellDef="let row">
+                                <mat-checkbox color="warn"
+                                              (click)="$event.stopPropagation()"
+                                              (change)="onChange($event,row)"
+                                              [checked]="selection.isSelected(row)">
+                                </mat-checkbox>
+                            </mat-cell>
+                        </ng-container>
 
-                    <ng-container matColumnDef="ava">
-                        <mat-header-cell *matHeaderCellDef fxFlex="10">ava</mat-header-cell>
-                        <mat-cell *matCellDef="let element" fxFlex="10">
-                            <img src="{{element.avatar_url}}">
-                        </mat-cell>
-                    </ng-container>
+                        <ng-container matColumnDef="ava">
+                            <mat-header-cell *matHeaderCellDef>ava</mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <img src="{{element.avatar_url}}" class="search-avatar">
+                            </mat-cell>
+                        </ng-container>
 
-                    <ng-container matColumnDef="login">
-                        <mat-header-cell *matHeaderCellDef fxFlex="30">login</mat-header-cell>
-                        <mat-cell *matCellDef="let element" fxFlex="30">
-                            <span class="ellipsis" title="12345">{{element.login}}</span>
-                        </mat-cell>
-                    </ng-container>
+                        <ng-container matColumnDef="login">
+                            <mat-header-cell *matHeaderCellDef>login</mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <span class="ellipsis">{{element.login}}</span>
+                            </mat-cell>
+                        </ng-container>
 
-                    <ng-container matColumnDef="url">
-                        <mat-header-cell *matHeaderCellDef>url</mat-header-cell>
-                        <mat-cell *matCellDef="let element">
-                            <span class="ellipsis">{{element.html_url}}</span>
-                        </mat-cell>
-                    </ng-container>
+                        <ng-container matColumnDef="score">
+                            <mat-header-cell *matHeaderCellDef>score</mat-header-cell>
+                            <mat-cell *matCellDef="let element">
+                                <span class="ellipsis">{{element.score}}</span>
+                            </mat-cell>
+                        </ng-container>
 
-                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></mat-row>
-                </mat-table>
-                <mat-paginator #paginator
-                               [length]=countUsers
-                               [pageIndex]="pageIndex"
-                               [pageSize]="pageSize"
-                               [pageSizeOptions]="[10, 20, 30]"
-                               (page)="paginatorEvent($event)">
-                </mat-paginator>
+                        <ng-container matColumnDef="url">
+                            <mat-header-cell *matHeaderCellDef>url</mat-header-cell>
+                            <mat-cell *matCellDef="let element"
+                                      [matTooltip]="element.html_url"
+                                      matTooltipPosition="above">
+                                <a [href]="element.html_url" style="color: black">Git</a>
+                            </mat-cell>
+                        </ng-container>
+
+                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></mat-row>
+                    </mat-table>
+                    <mat-paginator [length]=countUsers
+                                   [pageIndex]="pageIndex"
+                                   [pageSize]="pageSize"
+                                   [pageSizeOptions]="[10, 20, 30]"
+                                   (page)="paginatorEvent($event)">
+                    </mat-paginator>
+                </mat-card>
             </div>
         </div>
         <div fxFlex="30">
