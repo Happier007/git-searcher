@@ -3,8 +3,9 @@
         <form [formGroup]="searchForm" (submit)="submitForm()" fxLayout="row">
             <mat-form-field fxFlex="34%" fxFlexOffset="20px">
                 <input matInput placeholder="Username" formControlName="username">
-                <mat-icon (click)="submitForm()" matSuffix>search</mat-icon>
-                <mat-error *ngIf="searchForm.get('username').touched && searchForm.get('username').invalid && searchForm.get('username').errors.required">
+                <mat-icon (click)="submitForm()" color="warn" matSuffix>search</mat-icon>
+                <mat-error
+                        *ngIf="searchForm.get('username').touched && searchForm.get('username').invalid && searchForm.get('username').errors.required">
                     Please enter the field
                 </mat-error>
             </mat-form-field>
