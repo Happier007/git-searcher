@@ -1,5 +1,6 @@
 // ANGULAR
 import { Component, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { IProfile } from '@models/profile';
 
 @Component({
     selector: 'app-search-checked',
@@ -8,7 +9,7 @@ import { Component, Input, SimpleChanges, OnChanges } from '@angular/core';
 })
 export class SearchCheckedComponent implements OnChanges {
 
-    @Input() checkedUsers: any[];
+    @Input() checkedUsers: IProfile[] = [];
 
     constructor() {
     }
@@ -17,7 +18,7 @@ export class SearchCheckedComponent implements OnChanges {
         this.checkedUsers = changes.checkedUsers.currentValue;
     }
 
-    public trackByFn(_: number, item: any): number {
-        return item.id;
+    public trackByFn(index: number): number {
+        return index;
     }
 }

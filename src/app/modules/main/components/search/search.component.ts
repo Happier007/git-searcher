@@ -11,8 +11,8 @@ import { PageEvent } from '@angular/material/paginator';
 import { SelectionModel } from '@angular/cdk/collections';
 
 // RXJS
-import { forkJoin, Observable, Subject } from 'rxjs';
-import { debounceTime, map, mergeMap, pluck, takeUntil, tap } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { pluck, takeUntil, tap } from 'rxjs/operators';
 
 // MODELS
 import { ISearch, IUserSearch } from '@models/search';
@@ -28,14 +28,15 @@ import { GitService } from '@services/git.service';
 })
 export class SearchComponent implements OnInit, OnDestroy {
 
-    @Output() checkedUsers: any = [];
+    @Output() checkedUsers: IProfile[] = [];
     @ViewChild('usernameInput', {static: false}) usernameInput: ElementRef<HTMLInputElement>;
     private searchForm: FormGroup = this.buildForm();
     private searchName: string;
     private searchId: string;
     private destroy$: Subject<void> = new Subject<void>();
     public users$: Observable<IUserSearch[]> = new Observable<IUserSearch[]>();
-    public selectedUser: IUserSearch;
+    public selectedUser: IProfile;
+
     public countUsers: number;
     public pageIndex = 0;
     public pageSize = 10;
@@ -48,8 +49,8 @@ export class SearchComponent implements OnInit, OnDestroy {
                 private fb: FormBuilder) {
         this.searchName = this.route.snapshot.queryParamMap.get('q');
         this.searchId = this.route.snapshot.queryParamMap.get('id');
-        this.pageSize = Number(this.route.snapshot.queryParamMap.get('per_page')) || this.pageSize;
-        this.pageIndex = Number(this.route.snapshot.queryParamMap.get('page')) || this.pageIndex;
+        this.pageSize = +this.route.snapshot.queryParamMap.get('per_page') || this.pageSize;
+        this.pageIndex = +this.route.snapshot.queryParamMap.get('page') || this.pageIndex;
     }
 
     ngOnInit(): void {
@@ -100,16 +101,17 @@ export class SearchComponent implements OnInit, OnDestroy {
                     this.countUsers = res.total_count;
                 }),
                 pluck('items'),
-                tap((users: any) => {
+                tap((users: IUserSearch[]) => {
                     if (this.searchId) {
-                        this.selectedUser = users.find(item => item.id.toString() === this.searchId);
+                        const user = users.find(item => item.id.toString() === this.searchId);
+                        this.addUser(user.login, 'detail');
                     }
                 })
             );
     }
 
     public selectRow(row): void {
-        this.selectedUser = row;
+        this.addUser(row.login, 'detail')
         this.updateQueryParams(this.searchName, row.id);
     }
 
@@ -158,31 +160,22 @@ export class SearchComponent implements OnInit, OnDestroy {
         });
     }
 
-    private addUser(login: string): void {
+    private addUser(login: string, typeUser: string = 'list'): void {
         this.gitService.searchUser(login)
             .pipe(
-                mergeMap((user: IProfile) => {
-                        return forkJoin(
-                            this.gitService.getRepos(user.repos_url),
-                            this.gitService.getGists(user.url))
-                            .pipe(
-                                map((responses: any) => {
-                                    return {
-                                        profile: user,
-                                        repos: responses[0],
-                                        gists: responses[1]
-                                    };
-                                })
-                            );
-                    }
-                ),
                 takeUntil(this.destroy$)
             ).subscribe(
-            (data) => this.checkedUsers.push(data)
+            (user: IProfile) => {
+                if (typeUser === 'detail') {
+                    this.selectedUser = user;
+                } else {
+                    this.checkedUsers.push(user);
+                }
+            }
         );
     }
 
     private removeUser(id: number): void {
-        this.checkedUsers = this.checkedUsers.filter(item => item.profile.id !== id);
+        this.checkedUsers = this.checkedUsers.filter(item => item.id !== id);
     }
 }

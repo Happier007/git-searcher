@@ -3,48 +3,13 @@
         <mat-expansion-panel>
             <mat-expansion-panel-header>
                 <mat-panel-title>
-                    <img src="{{user.profile.avatar_url}}" class="search-avatar" alt="user">
+                    <img src="{{user.avatar_url}}" class="search-avatar" alt="user">
                 </mat-panel-title>
                 <mat-panel-description>
-                    {{user.profile.login}}
+                    {{user.login}}
                 </mat-panel-description>
             </mat-expansion-panel-header>
-
-            <mat-card-header>
-                <mat-card-title>{{user.profile.login}}</mat-card-title>
-                <mat-card-subtitle>{{user.profile.html_url}}</mat-card-subtitle>
-            </mat-card-header>
-            <img mat-card-image src="{{user.profile.avatar_url}}" alt="user">
-            <mat-card-actions>
-                <mat-tab-group color="warn" backgroundColor="primary">
-                    <mat-tab *ngIf="user.repos">
-                        <ng-template matTabLabel>
-                            <span matBadge="{{user.profile.public_repos}}" matBadgeOverlap="false"
-                                  matBadgeColor="warn">Repos</span>
-                        </ng-template>
-                        <mat-list>
-                            <a mat-list-item *ngFor="let repo of user.repos; trackBy: trackByFn"
-                               [href]=repo.html_url>
-                                <mat-icon mat-list-icon>folder_special</mat-icon>
-                                <h4 mat-line>{{repo.name}}</h4>
-                            </a>
-                        </mat-list>
-                    </mat-tab>
-                    <mat-tab *ngIf="user.gists">
-                        <ng-template matTabLabel>
-                            <span matBadge="{{user.profile.public_gists}}" matBadgeOverlap="false"
-                                  matBadgeColor="warn">Gists</span>
-                        </ng-template>
-                        <mat-list>
-                            <a mat-list-item *ngFor="let gist of user.gists; trackBy: trackByFn"
-                               [href]=gist.html_url>
-                                <mat-icon mat-list-icon>folder_special</mat-icon>
-                                <h4 mat-line>{{gist.description || '---'}}</h4>
-                            </a>
-                        </mat-list>
-                    </mat-tab>
-                </mat-tab-group>
-            </mat-card-actions>
+            <app-user-detail [user]="user"></app-user-detail>
         </mat-expansion-panel>
     </mat-accordion>
 </div>

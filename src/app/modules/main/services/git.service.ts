@@ -11,8 +11,12 @@ import { IProfile } from '@models/profile';
 import { IUser } from '@models/user';
 import { IToken } from '@models/token';
 import { ISearch } from '@models/search';
+import { IRepos } from '@models/repos';
+import { IGist } from '@models/gist';
 
 import { environment } from '@environments/environment';
+
+
 
 @Injectable({
     providedIn: 'root'
@@ -100,11 +104,11 @@ export class GitService {
         return this.http.get<IProfile>(`https://api.github.com/users/${username}`);
     }
 
-    public getRepos(url: string): Observable<any> {
-        return this.http.get(url);
+    public getRepos(url: string): Observable<IRepos[]> {
+        return this.http.get<IRepos[]>(url);
     }
 
-    public getGists(url: string): Observable<any> {
-        return this.http.get(`${url}/gists`);
+    public getGists(url: string): Observable<IGist[]> {
+        return this.http.get<IGist[]>(`${url}/gists`);
     }
 }
