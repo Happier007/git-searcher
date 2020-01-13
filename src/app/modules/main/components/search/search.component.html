@@ -28,7 +28,7 @@
                             <mat-cell *matCellDef="let row">
                                 <mat-checkbox color="warn"
                                               (click)="$event.stopPropagation()"
-                                              (change)="onChange($event,row)"
+                                              (change)="checkboxChange($event,row)"
                                               [checked]="selection.isSelected(row)">
                                 </mat-checkbox>
                             </mat-cell>
@@ -60,7 +60,9 @@
                             <mat-cell *matCellDef="let element"
                                       [matTooltip]="element.html_url"
                                       matTooltipPosition="above">
-                                <a [href]="element.html_url"><mat-icon>arrow_forward</mat-icon></a>
+                                <a [href]="element.html_url">
+                                    <mat-icon>arrow_forward</mat-icon>
+                                </a>
                             </mat-cell>
                         </ng-container>
 
@@ -68,8 +70,8 @@
                         <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></mat-row>
                     </mat-table>
                     <mat-paginator [length]=countUsers
-                                   [pageIndex]="pageIndex"
-                                   [pageSize]="pageSize"
+                                   [pageIndex]="queryParams.page"
+                                   [pageSize]="queryParams.per_page"
                                    [pageSizeOptions]="[10, 20, 30]"
                                    (page)="paginatorEvent($event)">
                     </mat-paginator>

@@ -20,6 +20,7 @@ import { IProfile } from '@models/profile';
 
 // MAIN
 import { GitService } from '@services/git.service';
+import { IQueryParams } from '@models/queryParams';
 
 @Component({
     selector: 'app-search',
@@ -31,15 +32,11 @@ export class SearchComponent implements OnInit, OnDestroy {
     @Output() checkedUsers: IProfile[] = [];
     @ViewChild('usernameInput', {static: false}) usernameInput: ElementRef<HTMLInputElement>;
     private searchForm: FormGroup = this.buildForm();
-    private searchName: string;
-    private searchId: string;
     private destroy$: Subject<void> = new Subject<void>();
     public users$: Observable<IUserSearch[]> = new Observable<IUserSearch[]>();
     public selectedUser: IProfile;
-
+    public queryParams: IQueryParams;
     public countUsers: number;
-    public pageIndex = 0;
-    public pageSize = 10;
     public displayedColumns: string[] = ['select', 'ava', 'login', 'score', 'url'];
     public selection = new SelectionModel<IUserSearch>(true, []);
 
@@ -47,15 +44,12 @@ export class SearchComponent implements OnInit, OnDestroy {
                 private route: ActivatedRoute,
                 private gitService: GitService,
                 private fb: FormBuilder) {
-        this.searchName = this.route.snapshot.queryParamMap.get('q');
-        this.searchId = this.route.snapshot.queryParamMap.get('id');
-        this.pageSize = +this.route.snapshot.queryParamMap.get('per_page') || this.pageSize;
-        this.pageIndex = +this.route.snapshot.queryParamMap.get('page') || this.pageIndex;
     }
 
     ngOnInit(): void {
-        if (this.searchName) {
-            this.loadUsers(this.searchName);
+        this.queryParams = this.gitService.getRouteParams();
+        if (this.queryParams.q) {
+            this.loadUsers(this.queryParams.q);
         }
     }
 
@@ -67,43 +61,45 @@ export class SearchComponent implements OnInit, OnDestroy {
     private buildForm(): FormGroup {
         return this.fb.group({
             username: new FormControl('', [
-                Validators.required])
+                Validators.required]),
         });
     }
 
     private submitForm(): void {
         if (this.searchForm.valid) {
-            this.searchName = this.searchForm.value.username;
-            this.updateQueryParams(this.searchName, null, 0, 10);
-            this.loadUsers(this.searchName);
+            const searchName = this.searchForm.value.username;
+            this.updateQueryParams(searchName);
+            this.loadUsers(searchName);
             this.selectedUser = null;
             this.checkedUsers = [];
         }
     }
 
-    private updateQueryParams(q: string, id: number = null, pageIndex?: number, pageSize?: number) {
-        this.pageIndex = pageIndex || this.pageIndex;
-        this.pageSize = pageSize || this.pageSize;
+    private updateQueryParams(q: string, id: number = null, pageIndex: number = 0, pageSize: number = 10) {
+        this.queryParams.q = q;
+        this.queryParams.id = id;
+        this.queryParams.page = pageIndex || this.queryParams.page;
+        this.queryParams.pageSize = pageSize || this.queryParams.pageSize;
         this.router.navigate([], {
             queryParams: {
-                q,
-                id,
-                page: this.pageIndex,
-                per_page: this.pageSize
+                q: this.queryParams.q,
+                id: this.queryParams.id,
+                page: this.queryParams.page,
+                per_page: this.queryParams.page,
             }
         });
     }
 
     private loadUsers(username: string): void {
-        this.users$ = this.gitService.searchUsers(username, this.pageIndex, this.pageSize)
+        this.users$ = this.gitService.searchUsers(username, this.queryParams.page, this.queryParams.pageSize)
             .pipe(
                 tap((res: ISearch) => {
                     this.countUsers = res.total_count;
                 }),
                 pluck('items'),
                 tap((users: IUserSearch[]) => {
-                    if (this.searchId) {
-                        const user = users.find(item => item.id.toString() === this.searchId);
+                    if (this.queryParams.id) {
+                        const user = users.find(item => item.id === this.queryParams.id);
                         this.addUser(user.login, 'detail');
                     }
                 })
@@ -111,24 +107,22 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     public selectRow(row): void {
-        this.addUser(row.login, 'detail')
-        this.updateQueryParams(this.searchName, row.id);
+        this.addUser(row.login, 'detail');
+        this.updateQueryParams(this.queryParams.q, row.id);
     }
 
     public paginatorEvent(event: PageEvent): PageEvent {
-        this.pageSize = event.pageSize;
-        this.pageIndex = event.pageIndex;
-        if (this.searchName) {
-            this.updateQueryParams(this.searchName);
-            this.loadUsers(this.searchName);
+        this.queryParams.pageSize = event.pageSize;
+        this.queryParams.page = event.pageIndex;
+        if (this.queryParams.q) {
+            this.updateQueryParams(this.queryParams.q);
+            this.loadUsers(this.queryParams.q);
         }
         return event;
     }
 
-    public onChange(event: MatCheckboxChange, row: IUserSearch): void {
-        if (event) {
-            this.selection.toggle(row);
-        }
+    public checkboxChange(event: MatCheckboxChange, row: IUserSearch): void {
+        this.selection.toggle(row);
         if (event.checked) {
             this.addUser(row.login);
         } else {

@@ -15,7 +15,7 @@ import { IRepos } from '@models/repos';
 import { IGist } from '@models/gist';
 
 import { environment } from '@environments/environment';
-
+import { IQueryParams } from '@models/queryParams';
 
 
 @Injectable({
@@ -94,21 +94,39 @@ export class GitService {
     public searchUsers(username: string, page: number, perPage: number): Observable<ISearch> {
         const queryParams = {
             q: `${username}in:login`,
-            page: (page + 1).toString(),
-            per_page: perPage.toString()
+            page: (page + 1),
+            per_page: perPage
         };
-        return this.http.get<ISearch>('https://api.github.com/search/users', {params: queryParams});
+        return this.http.get<ISearch>('https://api.github.com/search/users', {params: queryParams as any});
     }
 
     public searchUser(username: string): Observable<IProfile> {
         return this.http.get<IProfile>(`https://api.github.com/users/${username}`);
     }
 
-    public getRepos(url: string): Observable<IRepos[]> {
-        return this.http.get<IRepos[]>(url);
+    public getRepos(url: string, page: number): Observable<IRepos[]> {
+        const queryParams = {
+            page: page + 1,
+            per_page: 10
+        };
+        return this.http.get<IRepos[]>(url, {params: queryParams as any});
     }
 
-    public getGists(url: string): Observable<IGist[]> {
-        return this.http.get<IGist[]>(`${url}/gists`);
+    public getGists(url: string, page: number): Observable<IGist[]> {
+        const queryParams = {
+            page: page + 1,
+            per_page: 10
+        };
+        return this.http.get<IGist[]>(`${url}/gists`, {params: queryParams as any});
+    }
+
+    public getRouteParams(): IQueryParams {
+        const routeParams = {
+            q: this.route.snapshot.queryParamMap.get('q'),
+            id: +this.route.snapshot.queryParamMap.get('id') || null,
+            page: +this.route.snapshot.queryParamMap.get('page') || 1,
+            perSize: +this.route.snapshot.queryParamMap.get('per_page') || 10
+        };
+        return routeParams;
     }
 }

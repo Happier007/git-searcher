@@ -36,7 +36,7 @@ const MODULES = [
     MatTooltipModule,
     MatListModule,
     MatBadgeModule,
-    MatExpansionModule,
+    MatExpansionModule
 ]
 
 @NgModule({

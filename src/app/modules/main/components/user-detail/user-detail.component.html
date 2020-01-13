@@ -7,30 +7,38 @@
     <p>{{user.bio}}</p>
 </mat-card-content>
 <mat-card-actions>
-    <mat-tab-group color="warn" backgroundColor="primary">
-        <mat-tab *ngIf="(repos$ | async) as repos">
+    <mat-tab-group #matTabGroup color="warn" backgroundColor="primary" dynamicHeight>
+        <mat-tab>
             <ng-template matTabLabel>
                 <span matBadge="{{user.public_repos}}" matBadgeOverlap="false" matBadgeColor="warn">Repos</span>
             </ng-template>
             <mat-list>
-                <a mat-list-item *ngFor="let repo of repos; trackBy: trackByFn"
+                <a mat-list-item *ngFor="let repo of repos$| async; trackBy: trackByFn"
                    [href]=repo.html_url>
                     <mat-icon mat-list-icon>folder_special</mat-icon>
                     <h4 mat-line>{{repo.name}}</h4>
                 </a>
             </mat-list>
+            <mat-paginator [length]="user.public_repos"
+                           [pageSize]="10"
+                           [pageIndex]="pageIndexRepos"
+                           (page)="pageEventRepos($event)"></mat-paginator>
         </mat-tab>
-        <mat-tab *ngIf="(gists$ | async) as gists">
+        <mat-tab>
             <ng-template matTabLabel>
                 <span matBadge="{{user.public_gists}}" matBadgeOverlap="false" matBadgeColor="warn">Gists</span>
             </ng-template>
             <mat-list>
-                <a mat-list-item *ngFor="let gist of gists"
+                <a mat-list-item *ngFor="let gist of gists$ | async"
                    [href]=gist.html_url>
                     <mat-icon mat-list-icon>folder_special</mat-icon>
                     <h4 mat-line>{{gist.description || '---'}}</h4>
                 </a>
             </mat-list>
+            <mat-paginator [length]="user.public_gists"
+                           [pageSize]="10"
+                           [pageIndex]="pageIndexGists"
+                           (page)="pageEventGists($event)"></mat-paginator>
         </mat-tab>
     </mat-tab-group>
 </mat-card-actions>

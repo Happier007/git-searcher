@@ -8,6 +8,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from '../../app-routing.module';
 import { AppComponent } from '../../entrypoint/app.component';
 
+
 // MATERIAL
 import { AppMaterialModule } from '../material/app-material.module';
 
@@ -18,7 +19,8 @@ import {
     ProfileComponent,
     SearchComponent,
     SearchDetailComponent,
-    SearchCheckedComponent
+    SearchCheckedComponent,
+    UserDetailComponent
 } from './components';
 import { LogInterseptor } from './interceptors/log.interseptor';
 
@@ -30,7 +32,8 @@ import { LogInterseptor } from './interceptors/log.interseptor';
         ProfileComponent,
         SearchComponent,
         SearchDetailComponent,
-        SearchCheckedComponent
+        SearchCheckedComponent,
+        UserDetailComponent
     ],
     imports: [
         BrowserModule,
