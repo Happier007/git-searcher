@@ -21,6 +21,9 @@ import {
     SearchCheckedComponent
 } from './components';
 import { LogInterseptor } from './interceptors/log.interseptor';
+import { UserDetailComponent } from './components/user-detail/user-detail.component';
+import { MatSortModule } from "@angular/material/sort";
+import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 
 @NgModule({
     declarations: [
@@ -30,7 +33,8 @@ import { LogInterseptor } from './interceptors/log.interseptor';
         ProfileComponent,
         SearchComponent,
         SearchDetailComponent,
-        SearchCheckedComponent
+        SearchCheckedComponent,
+        UserDetailComponent,
     ],
     imports: [
         BrowserModule,
@@ -40,6 +44,8 @@ import { LogInterseptor } from './interceptors/log.interseptor';
         FlexLayoutModule,
         HttpClientModule,
         AppMaterialModule,
+        MatSortModule,
+        MatProgressSpinnerModule,
     ],
     providers: [
         {

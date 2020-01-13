@@ -15,7 +15,7 @@ import { IRepos } from '@models/repos';
 import { IGist } from '@models/gist';
 
 import { environment } from '@environments/environment';
-
+import { IQueryParams } from "@models/queryParams";
 
 
 @Injectable({
@@ -91,16 +91,19 @@ export class GitService {
         this.router.navigate(['/auth']);
     }
 
-    public searchUsers(username: string, page: number, perPage: number): Observable<ISearch> {
-        const queryParams = {
-            q: `${username}in:login`,
-            page: (page + 1).toString(),
-            per_page: perPage.toString()
-        };
-        return this.http.get<ISearch>('https://api.github.com/search/users', {params: queryParams});
+    public searchUsers(queryParams: IQueryParams): Observable<ISearch> {
+        queryParams.page = queryParams.page + 1;
+        // const queryParams = {
+        //     q: `${queryParams.q}in:login`,
+        //     page: (queryParams.page).toString(),
+        //     per_page: queryParams.per_page.toString()
+        // };
+        return this.http.get<ISearch>('https://api.github.com/search/users', {
+            params: (queryParams as any)
+        });
     }
 
-    public searchUser(username: string): Observable<IProfile> {
+    public profileUser(username: string): Observable<IProfile> {
         return this.http.get<IProfile>(`https://api.github.com/users/${username}`);
     }
 

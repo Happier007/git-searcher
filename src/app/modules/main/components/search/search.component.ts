@@ -20,6 +20,8 @@ import { IProfile } from '@models/profile';
 
 // MAIN
 import { GitService } from '@services/git.service';
+import { PaginationService } from '@services/pagination.service';
+import { IQueryParams } from '@models/queryParams';
 
 @Component({
     selector: 'app-search',
@@ -32,30 +34,27 @@ export class SearchComponent implements OnInit, OnDestroy {
     @ViewChild('usernameInput', {static: false}) usernameInput: ElementRef<HTMLInputElement>;
     private searchForm: FormGroup = this.buildForm();
     private searchName: string;
-    private searchId: string;
     private destroy$: Subject<void> = new Subject<void>();
-    public users$: Observable<IUserSearch[]> = new Observable<IUserSearch[]>();
-    public selectedUser: IProfile;
+    public users: IUserSearch[];
+    public selectedUser: IUserSearch;
+    public detailUser: IProfile;
+    public routeParams: IQueryParams;
 
     public countUsers: number;
-    public pageIndex = 0;
-    public pageSize = 10;
     public displayedColumns: string[] = ['select', 'ava', 'login', 'score', 'url'];
     public selection = new SelectionModel<IUserSearch>(true, []);
 
     constructor(private router: Router,
                 private route: ActivatedRoute,
                 private gitService: GitService,
-                private fb: FormBuilder) {
-        this.searchName = this.route.snapshot.queryParamMap.get('q');
-        this.searchId = this.route.snapshot.queryParamMap.get('id');
-        this.pageSize = +this.route.snapshot.queryParamMap.get('per_page') || this.pageSize;
-        this.pageIndex = +this.route.snapshot.queryParamMap.get('page') || this.pageIndex;
+                private fb: FormBuilder,
+                private paginationService: PaginationService) {
+        this.routeParams = this.paginationService.getRouteParams();
     }
 
     ngOnInit(): void {
-        if (this.searchName) {
-            this.loadUsers(this.searchName);
+        if (!!this.routeParams.q) {
+            this.loadUsers();
         }
     }
 
@@ -73,56 +72,33 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     private submitForm(): void {
         if (this.searchForm.valid) {
-            this.searchName = this.searchForm.value.username;
-            this.updateQueryParams(this.searchName, null, 0, 10);
-            this.loadUsers(this.searchName);
+            this.routeParams.q = this.searchForm.value.username;
+            this.paginationService.setSearchParams(this.routeParams);
             this.selectedUser = null;
             this.checkedUsers = [];
         }
     }
 
-    private updateQueryParams(q: string, id: number = null, pageIndex?: number, pageSize?: number) {
-        this.pageIndex = pageIndex || this.pageIndex;
-        this.pageSize = pageSize || this.pageSize;
-        this.router.navigate([], {
-            queryParams: {
-                q,
-                id,
-                page: this.pageIndex,
-                per_page: this.pageSize
-            }
-        });
-    }
-
-    private loadUsers(username: string): void {
-        this.users$ = this.gitService.searchUsers(username, this.pageIndex, this.pageSize)
+    private loadUsers(): void {
+        this.paginationService.setSearchParams(this.routeParams);
+        this.paginationService.initUsersEvent$
             .pipe(
-                tap((res: ISearch) => {
-                    this.countUsers = res.total_count;
-                }),
-                pluck('items'),
-                tap((users: IUserSearch[]) => {
-                    if (this.searchId) {
-                        const user = users.find(item => item.id.toString() === this.searchId);
-                        this.addUser(user.login, 'detail');
-                    }
-                })
-            );
+                takeUntil(this.destroy$)
+            )
+            .subscribe(() => {
+                this.users = this.paginationService.users;
+                this.countUsers = this.paginationService.countUsers;
+                this.selectedUser = this.paginationService.selectedUser;
+            });
     }
 
     public selectRow(row): void {
-        this.addUser(row.login, 'detail')
-        this.updateQueryParams(this.searchName, row.id);
+        this.addUser(row.login, 'detail');
+        //this.updateQueryParams(this.searchName, row.id);
     }
 
-    public paginatorEvent(event: PageEvent): PageEvent {
-        this.pageSize = event.pageSize;
-        this.pageIndex = event.pageIndex;
-        if (this.searchName) {
-            this.updateQueryParams(this.searchName);
-            this.loadUsers(this.searchName);
-        }
-        return event;
+    public paginatorEvent(event: PageEvent): void {
+        this.paginationService.updateQueryParams(event);
     }
 
     public onChange(event: MatCheckboxChange, row: IUserSearch): void {
@@ -161,13 +137,15 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     private addUser(login: string, typeUser: string = 'list'): void {
-        this.gitService.searchUser(login)
+        this.gitService.profileUser(login)
             .pipe(
                 takeUntil(this.destroy$)
             ).subscribe(
             (user: IProfile) => {
                 if (typeUser === 'detail') {
-                    this.selectedUser = user;
+                    this.detailUser = user;
+                    this.routeParams.id = user.id;
+                    this.paginationService.setSearchParams(this.routeParams);
                 } else {
                     this.checkedUsers.push(user);
                 }

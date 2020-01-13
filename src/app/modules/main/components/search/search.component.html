@@ -13,10 +13,9 @@
     </mat-card>
     <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-around start">
         <div fxFlex="35">
-            <div *ngIf="(users$ | async) as users">
+            <div *ngIf="users">
                 <mat-card fxLayoutGap="20px">
                     <mat-table *ngIf="users" [dataSource]="users">
-
                         <ng-container matColumnDef="select">
                             <mat-header-cell *matHeaderCellDef>
                                 <mat-checkbox color="warn"
@@ -60,7 +59,9 @@
                             <mat-cell *matCellDef="let element"
                                       [matTooltip]="element.html_url"
                                       matTooltipPosition="above">
-                                <a [href]="element.html_url"><mat-icon>arrow_forward</mat-icon></a>
+                                <a [href]="element.html_url">
+                                    <mat-icon>arrow_forward</mat-icon>
+                                </a>
                             </mat-cell>
                         </ng-container>
 
@@ -68,8 +69,8 @@
                         <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></mat-row>
                     </mat-table>
                     <mat-paginator [length]=countUsers
-                                   [pageIndex]="pageIndex"
-                                   [pageSize]="pageSize"
+                                   [pageIndex]="routeParams.page"
+                                   [pageSize]="routeParams.per_page"
                                    [pageSizeOptions]="[10, 20, 30]"
                                    (page)="paginatorEvent($event)">
                     </mat-paginator>
@@ -82,7 +83,7 @@
             </div>
         </div>
         <div fxFlex="30">
-            <app-search-checked [checkedUsers]="checkedUsers"></app-search-checked>
+<!--            <app-search-checked [checkedUsers]="checkedUsers"></app-search-checked>-->
         </div>
     </div>
 </div>
