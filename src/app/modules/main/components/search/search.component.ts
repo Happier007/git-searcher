@@ -28,18 +28,17 @@ import { IQueryParams } from '@models/queryParams';
     styleUrls: ['./search.component.scss']
 })
 export class SearchComponent implements OnInit, OnDestroy {
-
-    // @Output() checkedUsers: IProfile[] = [];
     @ViewChild('usernameInput', {static: false}) usernameInput: ElementRef<HTMLInputElement>;
     private searchForm: FormGroup = this.buildForm();
     private destroy$: Subject<void> = new Subject<void>();
     public users$: Observable<IUserSearch[]> = new Observable<IUserSearch[]>();
-    public selectedUser: IProfile;
+    public detailUser: IProfile;
     public checkedUsers: IProfile[] = [];
     public queryParams: IQueryParams;
     public countUsers: number;
     public displayedColumns: string[] = ['select', 'ava', 'login', 'score', 'url'];
     public selection = new SelectionModel<IUserSearch>(true, []);
+    public loading = false;
 
     constructor(private router: Router,
                 private route: ActivatedRoute,
@@ -70,18 +69,22 @@ export class SearchComponent implements OnInit, OnDestroy {
     private submitForm(): void {
         if (this.searchForm.valid) {
             const searchName = this.searchForm.value.username;
-            this.updateQueryParams(searchName);
+            this.updateQueryParams(searchName, null, 0, 10);
             this.loadUsers(searchName);
-            this.selectedUser = null;
+            this.detailUser = null;
             this.checkedUsers = [];
         }
     }
 
-    private updateQueryParams(q: string, id: number = null, pageIndex?: number, pageSize?: number) {
+    private updateQueryParams(q: string, id: number = null, pageIndex?: number, pageSize?: number): void {
         this.queryParams.q = q;
         this.queryParams.id = id;
-        this.queryParams.page = pageIndex || this.queryParams.page;
-        this.queryParams.pageSize = pageSize || this.queryParams.pageSize;
+        if (pageIndex >= 0) {
+            this.queryParams.page = pageIndex;
+        }
+        if (pageSize > 0) {
+            this.queryParams.pageSize = pageSize;
+        }
         this.router.navigate([], {
             queryParams: {
                 q: this.queryParams.q,
@@ -93,6 +96,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     }
 
     private loadUsers(username: string): void {
+        this.loading = true;
         this.users$ = this.gitService.searchUsers(username, this.queryParams.page, this.queryParams.pageSize)
             .pipe(
                 tap((res: ISearch) => {
@@ -102,14 +106,16 @@ export class SearchComponent implements OnInit, OnDestroy {
                 tap((users: IUserSearch[]) => {
                     if (this.queryParams.id) {
                         const user = users.find(item => item.id === this.queryParams.id);
-                        this.addUser(user.login, 'detail');
+                        this.selectUser(user.login, 'detail');
                     }
+                    this.loading = false;
                 })
             );
+
     }
 
     public selectRow(row): void {
-        this.addUser(row.login, 'detail');
+        this.selectUser(row.login, 'detail');
         this.updateQueryParams(this.queryParams.q, row.id);
     }
 
@@ -118,7 +124,7 @@ export class SearchComponent implements OnInit, OnDestroy {
         if (this.queryParams.page !== event.pageIndex) {
             this.queryParams.page = event.pageIndex
             this.queryParams.id = null;
-            this.selectedUser = null;
+            this.detailUser = null;
         }
         if (this.queryParams.q) {
             this.updateQueryParams(this.queryParams.q, this.queryParams.id);
@@ -130,44 +136,49 @@ export class SearchComponent implements OnInit, OnDestroy {
     public checkboxChange(event: MatCheckboxChange, row: IUserSearch): void {
         this.selection.toggle(row);
         if (event.checked) {
-            this.addUser(row.login);
+            this.selectUser(row.login);
         } else {
             this.removeUser(row.id);
         }
     }
 
     /** Whether the number of selected elements matches the total number of rows. */
-    isAllSelected(users) {
+    private isAllSelected(users): boolean {
         const numSelected = this.selection.selected.length;
         const numRows = users.length;
         return numSelected === numRows;
     }
 
     /** Selects all rows if they are not all selected; otherwise clear selection. */
-    masterToggle(users) {
+    private masterToggle(users): void {
         this.isAllSelected(users) ?
             this.clearTable(users) :
-            users.forEach(row => {
-                this.selection.select(row);
-                this.addUser(row.login);
-            });
+            this.fillTable(users);
     }
 
-    clearTable(users) {
+    private fillTable(users): void {
+        this.checkedUsers = [];
+        users.forEach(row => {
+            this.selection.select(row);
+            this.selectUser(row.login);
+        });
+    }
+
+    private clearTable(users): void {
         this.selection.clear();
         users.forEach(row => {
             this.removeUser(row.id);
         });
     }
 
-    private addUser(login: string, typeUser: string = 'list'): void {
-        this.gitService.searchUser(login)
+    private selectUser(login: string, typeUser: string = 'list'): void {
+        this.gitService.userProfile(login)
             .pipe(
                 takeUntil(this.destroy$)
             ).subscribe(
             (user: IProfile) => {
                 if (typeUser === 'detail') {
-                    this.selectedUser = user;
+                    this.detailUser = user;
                 } else {
                     this.checkedUsers.push(user);
                 }

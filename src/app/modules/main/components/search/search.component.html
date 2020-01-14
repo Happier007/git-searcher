@@ -1,3 +1,10 @@
+<section class="example-section">
+    <mat-progress-bar
+            *ngIf="loading"
+            class="mat-progress-bar"
+            mode="indeterminate"
+            color="warn"></mat-progress-bar>
+</section>
 <div fxLayout="column" fxFlex="100" fxLayoutGap="15px">
     <mat-card>
         <form [formGroup]="searchForm" (submit)="submitForm()" fxLayout="row">
@@ -79,8 +86,8 @@
             </div>
         </div>
         <div fxFlex="30">
-            <div *ngIf="selectedUser">
-                <app-search-detail [user]="selectedUser"></app-search-detail>
+            <div *ngIf="detailUser">
+                <app-search-detail [user]="detailUser"></app-search-detail>
             </div>
         </div>
         <div fxFlex="30">

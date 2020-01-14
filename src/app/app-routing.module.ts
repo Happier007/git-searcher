@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AuthComponent, ProfileComponent, SearchComponent } from './modules/main/components';
+import { AuthGuard } from './modules/main/guards/auth.guard';
 
 const routes: Routes = [
-    {path: '', redirectTo: '/auth', pathMatch: 'full'},
+    {path: '', redirectTo: '/search', pathMatch: 'full'},
+    {path: 'search', component: SearchComponent, canActivate: [AuthGuard]},
     {path: 'auth', component: AuthComponent},
     {path: 'profile', component: ProfileComponent},
-    {path: 'search', component: SearchComponent},
+    {path: '**', redirectTo: '/search', pathMatch: 'full' }
 ];
 
 @NgModule({

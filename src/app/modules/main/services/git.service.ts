@@ -85,6 +85,15 @@ export class GitService {
         return JSON.parse(localStorage.getItem(this.key));
     }
 
+    public isAuth(): boolean {
+        const authUser = this.readUser();
+        if (authUser && authUser.token) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public logout(): void {
         this.subject$.next();
         localStorage.setItem(this.key, JSON.stringify(null));
@@ -100,7 +109,7 @@ export class GitService {
         return this.http.get<ISearch>('https://api.github.com/search/users', {params: queryParams as any});
     }
 
-    public searchUser(username: string): Observable<IProfile> {
+    public userProfile(username: string): Observable<IProfile> {
         return this.http.get<IProfile>(`https://api.github.com/users/${username}`);
     }
 

@@ -1,3 +1,11 @@
 .mat-list-base .mat-list-item.mat-list-item-with-avatar {
     height: 35px;
 }
+
+mat-tab-group.tabsHeight {
+    ::ng-deep {
+        min-height: 425px !important;
+    }
+}
+
+

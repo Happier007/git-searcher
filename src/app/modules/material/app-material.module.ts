@@ -1,6 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
+// FLEX LAYOUT
+import { FlexLayoutModule } from '@angular/flex-layout';
+
+// MATERIAL
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -36,7 +40,8 @@ const MODULES = [
     MatTooltipModule,
     MatListModule,
     MatBadgeModule,
-    MatExpansionModule
+    MatExpansionModule,
+    FlexLayoutModule
 ]
 
 @NgModule({
