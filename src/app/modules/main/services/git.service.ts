@@ -124,8 +124,8 @@ export class GitService {
         const routeParams = {
             q: this.route.snapshot.queryParamMap.get('q'),
             id: +this.route.snapshot.queryParamMap.get('id') || null,
-            page: +this.route.snapshot.queryParamMap.get('page') || 1,
-            perSize: +this.route.snapshot.queryParamMap.get('per_page') || 10
+            page: +this.route.snapshot.queryParamMap.get('page') || 0,
+            pageSize: +this.route.snapshot.queryParamMap.get('per_page') || 10
         };
         return routeParams;
     }

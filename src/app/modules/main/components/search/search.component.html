@@ -71,7 +71,7 @@
                     </mat-table>
                     <mat-paginator [length]=countUsers
                                    [pageIndex]="queryParams.page"
-                                   [pageSize]="queryParams.per_page"
+                                   [pageSize]="queryParams.pageSize"
                                    [pageSizeOptions]="[10, 20, 30]"
                                    (page)="paginatorEvent($event)">
                     </mat-paginator>

@@ -8,7 +8,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from '../../app-routing.module';
 import { AppComponent } from '../../entrypoint/app.component';
 
-
 // MATERIAL
 import { AppMaterialModule } from '../material/app-material.module';
 
