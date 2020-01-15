@@ -54,17 +54,13 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.queryParams = this.gitService.getRouteParams();
-        // if (this.queryParams.q) {
-        //     this.loadUsers(this.queryParams.q);
-        //     this.searchForm.patchValue({username: this.queryParams.q});
-        // }
 
         this.searchForm.get('username').valueChanges
             .pipe(
                 debounceTime(250),
                 distinctUntilChanged(isEqual),
                 takeUntil(this.destroy$),
-            ).subscribe((uname) => this.loadUsers(uname));
+            ).subscribe((users) => this.loadUsers(users));
     }
 
     ngOnDestroy(): void {
@@ -82,50 +78,11 @@ export class SearchComponent implements OnInit, OnDestroy {
     private submitForm(): void {
         if (this.searchForm.valid) {
             const searchName = this.searchForm.value.username;
-            this.updateQueryParams(searchName, null, 0, 10);
             this.loadUsers(searchName);
             this.detailUser = null;
             this.checkedUsers = [];
         }
     }
-
-    private updateQueryParams(q: string, id: number = null, pageIndex?: number, pageSize?: number): void {
-        this.queryParams.q = q;
-        this.queryParams.id = id;
-        if (pageIndex >= 0) {
-            this.queryParams.page = pageIndex;
-        }
-        if (pageSize > 0) {
-            this.queryParams.pageSize = pageSize;
-        }
-        this.router.navigate([], {
-            queryParams: {
-                q: this.queryParams.q,
-                id: this.queryParams.id,
-                page: this.queryParams.page,
-                per_page: this.queryParams.pageSize,
-            }
-        });
-    }
-
-    // private loadUsers(username: string): void {
-    //     this.loading = true;
-    //     this.users$ = this.gitService.searchUsers(username, this.queryParams.page, this.queryParams.pageSize)
-    //         .pipe(
-    //             tap((res: ISearch) => {
-    //                 this.countUsers = res.total_count;
-    //             }),
-    //             pluck('items'),
-    //             tap((users: IUserSearch[]) => {
-    //                 if (this.queryParams.id) {
-    //                     const user = users.find(item => item.id === this.queryParams.id);
-    //                     this.selectUser(user.login, 'detail');
-    //                 }
-    //                 this.loading = false;
-    //             })
-    //         );
-    // }
-
 
     private loadUsers(username: string): void {
         this.loading = true;
@@ -140,7 +97,6 @@ export class SearchComponent implements OnInit, OnDestroy {
 
     public selectRow(row): void {
         this.selectUser(row.login, 'detail');
-        this.updateQueryParams(this.queryParams.q, row.id);
     }
 
     public paginatorEvent(event: PageEvent): PageEvent {
@@ -151,7 +107,6 @@ export class SearchComponent implements OnInit, OnDestroy {
             this.detailUser = null;
         }
         if (this.queryParams.q) {
-            this.updateQueryParams(this.queryParams.q, this.queryParams.id);
             this.loadUsers(this.queryParams.q);
         }
         return event;
