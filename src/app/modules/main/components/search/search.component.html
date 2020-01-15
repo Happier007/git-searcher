@@ -8,82 +8,101 @@
 <div fxLayout="column" fxFlex="100" fxLayoutGap="15px">
     <mat-card>
         <form [formGroup]="searchForm" (submit)="submitForm()" fxLayout="row">
-            <mat-form-field fxFlex="34%" fxFlexOffset="20px">
-                <input matInput placeholder="Username" formControlName="username">
-                <mat-icon (click)="submitForm()" color="warn" matSuffix>search</mat-icon>
-                <mat-error
-                        *ngIf="searchForm.get('username').touched && searchForm.get('username').invalid && searchForm.get('username').errors.required">
-                    Please enter the field
-                </mat-error>
+            <!--            <mat-form-field fxFlex="34%" fxFlexOffset="20px">-->
+            <!--                <input matInput placeholder="Username" formControlName="username">-->
+            <!--                <mat-icon (click)="submitForm()" color="warn" matSuffix>search</mat-icon>-->
+            <!--                <mat-error-->
+            <!--                        *ngIf="searchForm.get('username').touched && searchForm.get('username').invalid && searchForm.get('username').errors.required">-->
+            <!--                    Please enter the field-->
+            <!--                </mat-error>-->
+            <!--            </mat-form-field>-->
+            <mat-form-field fxFlex="37%" fxFlexOffset="20px">
+                <mat-chip-list #chipList aria-label="User selection">
+                    <mat-chip *ngFor="let user of chips"
+                              (removed)="removeChips(user)">
+                        {{user.login}}
+                        <mat-icon matChipRemove>cancel</mat-icon>
+                    </mat-chip>
+                    <input placeholder="User ..."
+                           #usernameInput
+                           formControlName="username"
+                           [matAutocomplete]="auto"
+                           [matChipInputFor]="chipList"
+                           [matChipInputAddOnBlur]=true>
+                </mat-chip-list>
+                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectedChips($event)">
+                    <mat-option *ngFor="let user of usersChips$ | async" [value]="user">
+                        {{user.login}}
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-icon matSuffix>search</mat-icon>
             </mat-form-field>
         </form>
     </mat-card>
     <div fxLayout="row" fxFlex="100" fxLayoutAlign="space-around start">
         <div fxFlex="35">
-            <div *ngIf="(users$ | async) as users">
-                <mat-card fxLayoutGap="20px">
-                    <mat-table *ngIf="users" [dataSource]="users">
+            <mat-card fxLayoutGap="20px">
 
-                        <ng-container matColumnDef="select">
-                            <mat-header-cell *matHeaderCellDef>
-                                <mat-checkbox color="warn"
-                                              (change)="$event ? masterToggle(users) : null"
-                                              [checked]="selection.hasValue() && isAllSelected(users)"
-                                              [indeterminate]="selection.hasValue() && !isAllSelected(users)">
-                                </mat-checkbox>
-                            </mat-header-cell>
-                            <mat-cell *matCellDef="let row">
-                                <mat-checkbox color="warn"
-                                              (click)="$event.stopPropagation()"
-                                              (change)="checkboxChange($event,row)"
-                                              [checked]="selection.isSelected(row)">
-                                </mat-checkbox>
-                            </mat-cell>
-                        </ng-container>
+                <mat-table #table *ngIf="chips" [dataSource]="chips" fxLayoutGap="20px">
+                    <ng-container matColumnDef="select">
+                        <mat-header-cell *matHeaderCellDef>
+                            <mat-checkbox color="warn"
+                                          (change)="$event ? masterToggle(chips) : null"
+                                          [checked]="selection.hasValue() && isAllSelected(chips)"
+                                          [indeterminate]="selection.hasValue() && !isAllSelected(chips)">
+                            </mat-checkbox>
+                        </mat-header-cell>
+                        <mat-cell *matCellDef="let row">
+                            <mat-checkbox color="warn"
+                                          (click)="$event.stopPropagation()"
+                                          (change)="checkboxChange($event,row)"
+                                          [checked]="selection.isSelected(row)">
+                            </mat-checkbox>
+                        </mat-cell>
+                    </ng-container>
 
-                        <ng-container matColumnDef="ava">
-                            <mat-header-cell *matHeaderCellDef>avatar</mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                <img src="{{element.avatar_url}}" class="search-avatar">
-                            </mat-cell>
-                        </ng-container>
+                    <ng-container matColumnDef="ava">
+                        <mat-header-cell *matHeaderCellDef>avatar</mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <img src="{{element.avatar_url}}" class="search-avatar">
+                        </mat-cell>
+                    </ng-container>
 
-                        <ng-container matColumnDef="login">
-                            <mat-header-cell *matHeaderCellDef>login</mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                <span class="ellipsis">{{element.login}}</span>
-                            </mat-cell>
-                        </ng-container>
+                    <ng-container matColumnDef="login">
+                        <mat-header-cell *matHeaderCellDef>login</mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <span class="ellipsis">{{element.login}}</span>
+                        </mat-cell>
+                    </ng-container>
 
-                        <ng-container matColumnDef="score">
-                            <mat-header-cell *matHeaderCellDef>score</mat-header-cell>
-                            <mat-cell *matCellDef="let element">
-                                <span class="ellipsis">{{element.score}}</span>
-                            </mat-cell>
-                        </ng-container>
+                    <ng-container matColumnDef="score">
+                        <mat-header-cell *matHeaderCellDef>score</mat-header-cell>
+                        <mat-cell *matCellDef="let element">
+                            <span class="ellipsis">{{element.score}}</span>
+                        </mat-cell>
+                    </ng-container>
 
-                        <ng-container matColumnDef="url">
-                            <mat-header-cell *matHeaderCellDef>url</mat-header-cell>
-                            <mat-cell *matCellDef="let element"
-                                      [matTooltip]="element.html_url"
-                                      matTooltipPosition="above">
-                                <a [href]="element.html_url">
-                                    <mat-icon>arrow_forward</mat-icon>
-                                </a>
-                            </mat-cell>
-                        </ng-container>
+                    <ng-container matColumnDef="url">
+                        <mat-header-cell *matHeaderCellDef>url</mat-header-cell>
+                        <mat-cell *matCellDef="let element"
+                                  [matTooltip]="element.html_url"
+                                  matTooltipPosition="above">
+                            <a [href]="element.html_url">
+                                <mat-icon>arrow_forward</mat-icon>
+                            </a>
+                        </mat-cell>
+                    </ng-container>
 
-                        <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-                        <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></mat-row>
-                    </mat-table>
-                    <mat-paginator [length]=countUsers
-                                   [pageIndex]="queryParams.page"
-                                   [pageSize]="queryParams.pageSize"
-                                   [pageSizeOptions]="[10, 20, 30]"
-                                   (page)="paginatorEvent($event)">
-                    </mat-paginator>
-                </mat-card>
-            </div>
+                    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                    <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selectRow(row)"></mat-row>
+                </mat-table>
+                <mat-paginator [length]=countUsers
+                               [pageIndex]="queryParams.page"
+                               [pageSize]="queryParams.pageSize"
+                               [pageSizeOptions]="[10, 20, 30]"
+                               (page)="paginatorEvent($event)">
+                </mat-paginator>
+            </mat-card>
         </div>
         <div fxFlex="30">
             <div *ngIf="detailUser">
