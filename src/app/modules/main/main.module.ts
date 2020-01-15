@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 // MATERIAL
-import { AppMaterialModule } from '../material/app-material.module';
+import { AppMaterialModule } from '@material/app-material.module';
 
 import {
     AuthComponent,
@@ -16,8 +16,6 @@ import {
     SearchCheckedComponent,
     UserDetailComponent
 } from './components';
-import { MatProgressBarModule } from "@angular/material/progress-bar";
-
 
 
 @NgModule({
@@ -36,7 +34,6 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
         HttpClientModule,
         AppMaterialModule,
         RouterModule,
-        MatProgressBarModule
     ],
     exports: [
         NavBarComponent,

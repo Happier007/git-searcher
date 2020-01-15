@@ -7,10 +7,12 @@ import { AppRoutingModule } from '../app-routing.module';
 import { AppComponent } from '../entrypoint/app.component';
 
 // MATERIAL
-import { AppMaterialModule } from './material/app-material.module';
+import { AppMaterialModule } from '@material/app-material.module';
 
 import { LogInterseptor } from './main/interceptors/log.interseptor';
-import { MainModule } from './main/main.module';
+import { MainModule } from '@main/main.module';
+import { SharedModule } from '@shared/shared.module';
+import { ConfirmDialogComponent } from '@shared/components';
 
 @NgModule({
     declarations: [
@@ -23,7 +25,8 @@ import { MainModule } from './main/main.module';
 
         // MODULES
         MainModule,
-        AppMaterialModule
+        AppMaterialModule,
+        SharedModule
     ],
     providers: [
         {
@@ -32,7 +35,8 @@ import { MainModule } from './main/main.module';
             multi: true
         }
     ],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    entryComponents: [ConfirmDialogComponent],
 })
 export class AppModule {
 }

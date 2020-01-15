@@ -22,8 +22,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatListModule } from '@angular/material/list';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 const MODULES = [
+    FlexLayoutModule,
     MatToolbarModule,
     MatCardModule,
     MatDividerModule,
@@ -41,7 +44,8 @@ const MODULES = [
     MatListModule,
     MatBadgeModule,
     MatExpansionModule,
-    FlexLayoutModule
+    MatDialogModule,
+    MatProgressBarModule
 ]
 
 @NgModule({

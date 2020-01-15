@@ -2,9 +2,9 @@
     height: 35px;
 }
 
-mat-tab-group.tabsHeight {
+mat-list.tabsHeight {
     ::ng-deep {
-        min-height: 425px !important;
+        min-height: 350px !important;
     }
 }
 

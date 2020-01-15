@@ -6,7 +6,7 @@
         <div *ngIf="user">
             <div fxLayout="row" fxLayoutGap="20px" fxLayoutAlign="center center">
                 <a matLine routerLink="/profile" color="warn">{{user.username}}</a>
-                <button mat-mini-fab color="warn" (click)="logout()">
+                <button mat-mini-fab color="warn" (click)="openDialog()">
                     <mat-icon>exit_to_app</mat-icon>
                 </button>
             </div>
