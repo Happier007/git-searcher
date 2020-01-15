@@ -1,0 +1,12 @@
+<div fxLayout="column" fxLayoutGap="30px">
+
+    <div fxLayout="column" fxLayoutAlign="top center">
+        <h2>logout</h2>
+        <span>Are you sure to logout?</span>
+    </div>
+    <div class="actions" fxLayout="row" fxLayoutGap="30px" fxLayoutAlign="center end">
+        <button mat-stroked-button color="primary" (click)="close()">No</button>
+        <button mat-stroked-button color="warn" (click)="logout()">Yes</button>
+    </div>
+</div>
+
