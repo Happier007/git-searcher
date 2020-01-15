@@ -3,9 +3,24 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@models/*": ["src/app/models/*"],
-      "@services/*": ["src/app/modules/main/services/*"],
-      "@environments/*": ["src/environments/*"]
+      "@models/*": [
+        "src/app/models/*"
+      ],
+      "@main/*": [
+        "src/app/modules/main/*"
+      ],
+      "@services/*": [
+        "src/app/modules/main/services/*"
+      ],
+      "@material/*": [
+        "src/app/modules/material/*"
+      ],
+      "@shared/*": [
+        "src/app/modules/shared/*"
+      ],
+      "@environments/*": [
+        "src/environments/*"
+      ]
     },
     "outDir": "./dist/out-tsc",
     "sourceMap": true,

@@ -11,6 +11,9 @@ import { IUser } from '@models/user';
 // MAIN
 import { GitService } from '@services/git.service';
 
+// SHARED
+import { DialogService } from '@shared/services';
+
 @Component({
     selector: 'app-nav-bar',
     templateUrl: './nav-bar.component.html',
@@ -21,7 +24,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
     private destroy$: Subject<void> = new Subject<void>();
     public user: IUser;
 
-    constructor(private gitService: GitService) {
+    constructor(private dialogService: DialogService,
+                private gitService: GitService) {
     }
 
     ngOnInit(): void {
@@ -40,7 +44,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
         this.destroy$.complete();
     }
 
-    public logout() {
-        this.gitService.logout();
+    openDialog() {
+        this.dialogService.openConfirmDialog();
     }
+
 }

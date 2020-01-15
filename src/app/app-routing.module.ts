@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { AuthComponent, ProfileComponent, SearchComponent } from './modules/main/components';
-import { AuthGuard } from './modules/main/guards/auth.guard';
+import { AuthComponent, ProfileComponent, SearchComponent } from '@main/components';
+import { AuthGuard } from '@main/guards/auth.guard';
 
 const routes: Routes = [
     {path: '', redirectTo: '/search', pathMatch: 'full'},

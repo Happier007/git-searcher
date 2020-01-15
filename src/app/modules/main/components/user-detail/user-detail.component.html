@@ -7,15 +7,15 @@
     <p>{{user.bio}}</p>
 </mat-card-content>
 <mat-card-actions>
-    <mat-tab-group [ngClass]="{tabsHeight: user.public_repos>0 || user.public_gists>0}" color="warn"
+    <mat-tab-group color="warn"
                    backgroundColor="primary">
         <mat-tab>
             <ng-template matTabLabel>
                 <span matBadge="{{user.public_repos}}" matBadgeOverlap="false" matBadgeColor="warn">Repos</span>
             </ng-template>
-            <mat-list>
+            <mat-list [ngClass]="{tabsHeight: user.public_repos>0 || user.public_gists>0}">
                 <a mat-list-item *ngFor="let repo of repos$| async; trackBy: trackByFn"
-                   [href]=repo.html_url>
+                   [href]=repo.html_url target="_blank">
                     <mat-icon mat-list-icon>folder_special</mat-icon>
                     <h4 mat-line>{{repo.name}}</h4>
                 </a>
@@ -29,9 +29,9 @@
             <ng-template matTabLabel>
                 <span matBadge="{{user.public_gists}}" matBadgeOverlap="false" matBadgeColor="warn">Gists</span>
             </ng-template>
-            <mat-list>
+            <mat-list [ngClass]="{tabsHeight: user.public_repos>0 || user.public_gists>0}">
                 <a mat-list-item *ngFor="let gist of gists$ | async"
-                   [href]=gist.html_url>
+                   [href]=gist.html_url target="_blank">
                     <mat-icon mat-list-icon>folder_special</mat-icon>
                     <h4 mat-line>{{gist.description || '---'}}</h4>
                 </a>
