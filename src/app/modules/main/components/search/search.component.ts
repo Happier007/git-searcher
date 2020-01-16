@@ -99,9 +99,7 @@ export class SearchComponent implements OnInit, OnDestroy {
         this.loading = true;
         this.users$ = this.gitService.searchUsers(username, this.queryParams.page, this.queryParams.pageSize)
             .pipe(
-                tap((res: ISearch) => {
-                    this.countUsers = res.total_count;
-                }),
+                tap((res: ISearch) => this.countUsers = res.total_count),
                 pluck('items'),
                 tap((users: IUserSearch[]) => {
                     if (this.queryParams.id) {

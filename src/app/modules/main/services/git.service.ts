@@ -1,11 +1,9 @@
 // ANGULAR
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
-
 // RXJS
 import { Observable, Subject } from 'rxjs';
-
 // MODELS
 import { IProfile } from '@models/profile';
 import { IUser } from '@models/user';
@@ -101,12 +99,11 @@ export class GitService {
     }
 
     public searchUsers(username: string, page: number, perPage: number): Observable<ISearch> {
-        const queryParams = {
-            q: `${username}in:login`,
-            page: (page + 1),
-            per_page: perPage
-        };
-        return this.http.get<ISearch>('https://api.github.com/search/users', {params: queryParams as any});
+        const params = new HttpParams()
+            .append('q', `${username}in:login`)
+            .append('page', String(page + 1))
+            .append('per_page', String(perPage));
+        return this.http.get<ISearch>('https://api.github.com/search/users', {params});
     }
 
     public userProfile(username: string): Observable<IProfile> {
@@ -114,28 +111,25 @@ export class GitService {
     }
 
     public getRepos(url: string, page: number): Observable<IRepos[]> {
-        const queryParams = {
-            page: page + 1,
-            per_page: 10
-        };
-        return this.http.get<IRepos[]>(url, {params: queryParams as any});
+        const params = new HttpParams()
+            .append('page', String(page + 1))
+            .append('per_page', '10');
+        return this.http.get<IRepos[]>(url, {params});
     }
 
     public getGists(url: string, page: number): Observable<IGist[]> {
-        const queryParams = {
-            page: page + 1,
-            per_page: 10
-        };
-        return this.http.get<IGist[]>(`${url}/gists`, {params: queryParams as any});
+        const params = new HttpParams()
+            .append('page', String(page + 1))
+            .append('per_page', '10');
+        return this.http.get<IGist[]>(`${url}/gists`, {params});
     }
 
     public getRouteParams(): IQueryParams {
-        const routeParams = {
+        return {
             q: this.route.snapshot.queryParamMap.get('q'),
             id: +this.route.snapshot.queryParamMap.get('id') || null,
             page: +this.route.snapshot.queryParamMap.get('page') || 0,
             pageSize: +this.route.snapshot.queryParamMap.get('per_page') || 10
         };
-        return routeParams;
     }
 }
